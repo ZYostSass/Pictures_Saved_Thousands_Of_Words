@@ -2,11 +2,10 @@ use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Formatter;
 
-use regex::Regex;
+use regex::{Captures, Regex};
+use tracing::error;
 
-use crate::error::AppError;
-
-enum Data {
+pub enum Data {
     Text(String),
     Boolean(bool),
     Number(i32),
@@ -22,26 +21,61 @@ impl fmt::Display for Data {
     }
 }
 
-pub fn render(template: &str, data: HashMap<str, Data>) -> Result<String, AppError> {
-    let replace_regex = Regex::new(r"\{\{(.*?)\}\}").unwrap();
-    let validate_regex = Regex::new(r"[ 	]*([a-z][a-z0-9_]*?)[ 	]*").unwrap();
+pub fn render(template: &str, data: HashMap<&str, Data>) -> String {
+    let print_regex = Regex::new(r"\{\{(.*?)\}\}").unwrap();
+    let new_template = print_regex.replace_all(&template, |caps: &Captures| {
+        let key = caps.get(1).unwrap().as_str().trim();
+        data[key].to_string()
+    });
 
-    let mut processed_template = template.to_string();
-    let replaced = replace_regex.captures_iter(&processed_template);
+    let repeat_regex = Regex::new(r"\{% repeat (\d*?) %\}((.|\n)*?)\{% end %\}").unwrap();
+    let new_template = repeat_regex.replace_all(&new_template, |caps: &Captures| {
+        let times = caps.get(1).unwrap().as_str().trim();
+        let code = caps.get(2).unwrap().as_str().trim();
 
-    for cap in replaced {
-        let group_to_process = cap.get_mut(1).unwrap();
-        let valid = validate_regex.find(group_to_process);
-        match valid {
-            None => Err(AppError::Template(format!(
-                "The template has an improper substitution at {}",
-                group_to_process
-            ))),
-            Some(thing) => {}
-        };
-    }
+        code.repeat(times.parse::<usize>().unwrap())
+    });
 
-    todo!()
+    let if_else_regex = Regex::new(
+        r"\{% if (.*?) %\}((.|\n)*?)(\{% else %\}((.|\n)*?)\{% endif %\}|\{% endif %\})",
+    )
+    .unwrap();
+
+    let new_template = if_else_regex.replace_all(&new_template, |caps: &Captures| {
+        let key = caps.get(1).unwrap().as_str().trim();
+        let if_code = caps.get(2).unwrap().as_str().trim();
+        let else_code = caps.get(5).map_or("", |m| m.as_str().trim());
+
+        if let Data::Boolean(exp) = data[key] {
+            if exp {
+                if_code.to_string()
+            } else {
+                else_code.to_string()
+            }
+        } else {
+            error!(
+                "Could not parse boolean key as boolean, or key didn't exist {}",
+                key
+            );
+            panic!();
+        }
+    });
+    // {# ... #}
+    // <-- ... -->
+    let new_template = new_template.replace("{#", "<--").replace("#}", "-->");
+
+    new_template.to_string()
 }
 
-// Hello {{ name }} String
+#[test]
+fn basic_template() {
+    let input = std::fs::read_to_string("templates/index.html").unwrap();
+    let data = HashMap::from([
+        ("name", Data::Text("Bob".to_string())),
+        ("allowed", Data::Boolean(true)),
+    ]);
+
+    let render = render(&input, data);
+    println!("{}", &render);
+    assert!(render.find("Welcome to hello world").is_some())
+}

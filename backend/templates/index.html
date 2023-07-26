@@ -1,4 +1,16 @@
 <html>
 <title>My page</title>
-<body>Hello {{ name }}</body>
+<body>
+
+Hello {{ name }}
+{# This is a comment #}
+
+{% if allowed %}
+{% repeat 3 %}
+<p>Welcome to hello world</p>
+{% end %}
+{% else %}
+<p>You're not allowed here</p>
+{% endif %}
+</body>
 </html>

@@ -8,7 +8,6 @@ use sqlx::Error;
 pub enum AppError {
     Question(QuestionError),
     Database(sqlx::Error),
-    Template(String),
     #[allow(dead_code)]
     Any(anyhow::Error),
 }
