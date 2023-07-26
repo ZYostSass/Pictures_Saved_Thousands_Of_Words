@@ -1,4 +1,5 @@
 use axum::extract::{Path, Query, State};
+use axum::response::Html;
 use axum::Json;
 use tera::Context;
 use tracing::error;
@@ -10,7 +11,7 @@ use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, Upd
 use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
-pub async fn root() -> String {
+pub async fn root() -> Html<String> {
     let mut context = Context::new();
     context.insert("name", "Casey");
     let rendered = TEMPLATES
@@ -19,7 +20,7 @@ pub async fn root() -> String {
             error!("Template rendering error: {}", err);
             panic!()
         });
-    rendered
+    Html(rendered)
 }
 
 // CRUD create - read - update - delete
