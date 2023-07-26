@@ -1,4 +1,3 @@
-use axum::Json;
 use std::sync::{Arc, Mutex, RwLock};
 
 use sqlx::postgres::PgPoolOptions;
@@ -126,7 +125,7 @@ SELECT * FROM questions
         title: String,
         content: String,
         tags: Option<Vec<String>>,
-    ) -> Result<Json<Question>, AppError> {
+    ) -> Result<Question, AppError> {
         let res = sqlx::query!(
             r#"INSERT INTO "questions"(title, content, tags)
            VALUES ($1, $2, $3)
@@ -146,7 +145,7 @@ SELECT * FROM questions
             tags: res.tags,
         };
 
-        Ok(Json(new_question))
+        Ok(new_question)
     }
 
     pub async fn update_question(
