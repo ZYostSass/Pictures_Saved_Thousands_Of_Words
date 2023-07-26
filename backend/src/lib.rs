@@ -15,6 +15,7 @@ pub mod handlers;
 pub mod layers;
 pub mod question;
 pub mod routes;
+mod template;
 
 pub async fn run_backend() {
     dotenv().ok();

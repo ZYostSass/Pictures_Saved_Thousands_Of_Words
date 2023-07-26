@@ -1,5 +1,5 @@
-use axum::Json;
 use axum::response::{IntoResponse, Response};
+use axum::Json;
 use http::StatusCode;
 use serde_json::json;
 use sqlx::Error;
@@ -8,8 +8,9 @@ use sqlx::Error;
 pub enum AppError {
     Question(QuestionError),
     Database(sqlx::Error),
+    Template(String),
     #[allow(dead_code)]
-    Any(anyhow::Error)
+    Any(anyhow::Error),
 }
 
 #[derive(derive_more::Display, Debug)]
