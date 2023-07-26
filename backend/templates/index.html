@@ -1,16 +1,13 @@
-<html>
-<title>My page</title>
+<!DOCTYPE html>
+<html lang="en">
+
 <body>
-
-Hello {{ name }}
-{# This is a comment #}
-
-{% if allowed %}
-{% repeat 3 %}
-<p>Welcome to hello world</p>
-{% end %}
-{% else %}
-<p>You're not allowed here</p>
-{% endif %}
+<div id="content">{% block content %}{% endblock content %}</div>
+<div id="footer">
+    {% block footer %}
+    {{ name }}
+    &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+    {% endblock footer %}
+</div>
 </body>
 </html>
