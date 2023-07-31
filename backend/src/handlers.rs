@@ -1,16 +1,18 @@
 use axum::extract::{Path, Query, State};
 use axum::response::Html;
 use axum::Json;
-use serde_json::Value;
+use jsonwebtoken::Header;
+use serde_json::{json, Value};
 use tera::Context;
 use tracing::error;
 
 use crate::answer::{Answer, CreateAnswer};
 use crate::db::Store;
 use crate::error::AppError;
+use crate::get_timestamp_after_8_hours;
 use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
 use crate::template::TEMPLATES;
-use crate::user::UserSignup;
+use crate::user::{Claims, KEYS, User, UserSignup};
 
 #[allow(dead_code)]
 pub async fn root() -> Html<String> {
@@ -106,5 +108,33 @@ pub async fn register(
 
     let new_user = database.create_user(credentials).await?;
     Ok(new_user)
+
+}
+
+pub async fn login(
+    State(mut database) : State<Store>,
+    Json(creds): Json<User>
+) -> Result<Json<Value>, AppError> {
+    if creds.email.is_empty() || creds.password.is_empty() {
+        return Err(AppError::MissingCredentials)
+    }
+
+    let existing_user = database.get_user(&creds.email).await?;
+
+    if existing_user.password != creds.password {
+        Err(AppError::MissingCredentials)
+    } else {
+        // at this point we've authenticated the user's identity
+        // create JWT to return
+        let claims = Claims {
+            id: 0,
+            email: creds.email.to_owned(),
+            exp: get_timestamp_after_8_hours(),
+        };
+
+        let token = jsonwebtoken::encode(&Header::default(), &claims, &KEYS.encoding)
+            .map_err(|_| AppError::MissingCredentials)?;
+        Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
+    }
 
 }

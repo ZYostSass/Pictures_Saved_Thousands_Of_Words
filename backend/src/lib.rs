@@ -1,5 +1,6 @@
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use dotenvy::dotenv;
 use tracing::info;
@@ -59,6 +60,14 @@ fn init_logging() {
         .init();
 }
 
+pub fn get_timestamp_after_8_hours() -> u64 {
+    let now = SystemTime::now();
+    let since_epoch = now.duration_since(UNIX_EPOCH)
+        .expect("Time somehow went backwards");
+    // 8 hours later
+    let eight_hours_from_now = since_epoch + Duration::from_secs(60*60*8);
+    eight_hours_from_now.as_secs()
+}
 
 /*AUTH
 1) Ability to create a new user with a secure password
