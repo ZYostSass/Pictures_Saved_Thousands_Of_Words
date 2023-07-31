@@ -16,6 +16,7 @@ pub mod layers;
 pub mod question;
 pub mod routes;
 mod template;
+mod user;
 
 pub async fn run_backend() {
     dotenv().ok();
@@ -57,3 +58,16 @@ fn init_logging() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 }
+
+
+/*AUTH
+1) Ability to create a new user with a secure password
+2) Ability to login as that user via the password
+3) Authenticate already-logged-in-users
+
+Registration Flow
+1. User attempts to register by sending a new email address, a password, and a confirm_password
+2. We want to check to see if their password == confirm_password
+3.  We check to see if there's a user in the database with that email already
+4. Create a new user account by adding a new row to the user table
+ */

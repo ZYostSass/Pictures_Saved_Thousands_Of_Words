@@ -28,3 +28,14 @@ Content-Type: application/json
   "content": "Some content",
   "tags": ["tag1", "tag2"]
 }
+
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "newemail1@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}

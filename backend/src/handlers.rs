@@ -1,6 +1,7 @@
 use axum::extract::{Path, Query, State};
 use axum::response::Html;
 use axum::Json;
+use serde_json::Value;
 use tera::Context;
 use tracing::error;
 
@@ -9,6 +10,7 @@ use crate::db::Store;
 use crate::error::AppError;
 use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
 use crate::template::TEMPLATES;
+use crate::user::UserSignup;
 
 #[allow(dead_code)]
 pub async fn root() -> Html<String> {
@@ -78,4 +80,31 @@ pub async fn create_answer(
         .add_answer(answer.content, answer.question_id)
         .await?;
     Ok(Json(new_answer))
+}
+
+pub async fn register(
+    State(mut database) : State<Store>,
+    Json(credentials): Json<UserSignup>
+) -> Result<Json<Value>, AppError> {
+
+    // We should also check to validate other things at some point like email address being in right format
+
+    if credentials.email.is_empty() || credentials.password.is_empty() {
+        return Err(AppError::MissingCredentials)
+    }
+
+    if credentials.password != credentials.confirm_password {
+        return Err(AppError::MissingCredentials)
+    }
+
+    // Check to see if there is already a user in the database with the given email address
+    let existing_user = database.get_user(&credentials.email).await;
+
+    if let Ok(_) = existing_user {
+        return Err(AppError::UserAlreadyExists);
+    }
+
+    let new_user = database.create_user(credentials).await?;
+    Ok(new_user)
+
 }
