@@ -1,6 +1,5 @@
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use once_cell::sync::Lazy;
-
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, sqlx::FromRow)]
@@ -16,10 +15,12 @@ pub struct UserSignup {
     pub confirm_password: String,
 }
 
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
 pub struct LoggedInUser {
     pub token: Claims
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Claims {
     pub id: i32,
     pub email: String,

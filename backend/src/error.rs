@@ -15,6 +15,7 @@ pub enum AppError {
     InternalServerError,
     #[allow(dead_code)]
     Any(anyhow::Error),
+    MissingContent,
 }
 
 #[derive(derive_more::Display, Debug)]
@@ -33,11 +34,27 @@ impl IntoResponse for AppError {
                 let message = format!("Internal server error! {}", err);
                 (StatusCode::INTERNAL_SERVER_ERROR, message)
             }
-            AppError::MissingCredentials => (StatusCode::UNAUTHORIZED, "Your credentials were missing or otherwise incorrect".to_string()),
-            AppError::UserDoesNotExist => (StatusCode::UNAUTHORIZED, "Your account does not exist!".to_string()),
-            AppError::UserAlreadyExists => (StatusCode::UNAUTHORIZED, "There is already an account with that email address in the system".to_string()),
+            AppError::MissingCredentials => (
+                StatusCode::UNAUTHORIZED,
+                "Your credentials were missing or otherwise incorrect".to_string(),
+            ),
+            AppError::UserDoesNotExist => (
+                StatusCode::UNAUTHORIZED,
+                "Your account does not exist!".to_string(),
+            ),
+            AppError::UserAlreadyExists => (
+                StatusCode::UNAUTHORIZED,
+                "There is already an account with that email address in the system".to_string(),
+            ),
             AppError::InvalidToken => (StatusCode::UNAUTHORIZED, "Invalid Token".to_string()),
-            AppError::InternalServerError => (StatusCode::INTERNAL_SERVER_ERROR, "Something terrible happened".to_string()),
+            AppError::InternalServerError => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Something terrible happened".to_string(),
+            ),
+            AppError::MissingContent => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Comment missing content".to_string(),
+            ),
         };
 
         let body = Json(json!({"error": error_message}));

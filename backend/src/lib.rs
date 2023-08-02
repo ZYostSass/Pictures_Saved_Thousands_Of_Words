@@ -8,16 +8,18 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::db::new_pool;
+use crate::error::AppError;
 
-pub mod answer;
+pub mod handlers;
+pub mod routes;
+pub mod models;
+
 pub mod db;
 pub mod error;
-pub mod handlers;
 pub mod layers;
-pub mod question;
-pub mod routes;
 mod template;
-mod user;
+
+
 
 pub async fn run_backend() {
     dotenv().ok();
@@ -25,7 +27,7 @@ pub async fn run_backend() {
 
     let addr = get_host_from_env();
 
-    let app = routes::app(new_pool().await).await;
+    let app = routes::main_routes::app(new_pool().await).await;
 
     info!("Listening...");
 
@@ -69,14 +71,4 @@ pub fn get_timestamp_after_8_hours() -> u64 {
     eight_hours_from_now.as_secs()
 }
 
-/*AUTH
-1) Ability to create a new user with a secure password
-2) Ability to login as that user via the password
-3) Authenticate already-logged-in-users
-
-Registration Flow
-1. User attempts to register by sending a new email address, a password, and a confirm_password
-2. We want to check to see if their password == confirm_password
-3.  We check to see if there's a user in the database with that email already
-4. Create a new user account by adding a new row to the user table
- */
+pub type AppResult<T> = Result<T, AppError>;

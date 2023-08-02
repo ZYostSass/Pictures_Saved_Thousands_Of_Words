@@ -1,13 +1,12 @@
+use backend::models::answer::CreateAnswer;
+use backend::models::question::{CreateQuestion, Question};
+use backend::routes::main_routes::app;
 use http::{Request, StatusCode};
 use hyper::Body;
 use sqlx::PgPool;
 use tower::ServiceExt;
 
-use backend::answer::CreateAnswer;
-use backend::question::{CreateQuestion, Question};
-use backend::routes::app;
-
-#[sqlx::test(fixtures("questions"))]
+#[sqlx::test(fixtures("0001_questions"))]
 async fn test_add_question(db_pool: PgPool) {
     let mut app = app(db_pool).await;
 
@@ -23,9 +22,7 @@ async fn test_add_question(db_pool: PgPool) {
                 .method(http::Method::POST)
                 .uri("/question")
                 .header(http::header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
-                .body(Body::from(
-                    serde_json::to_string(&question).unwrap()
-                ))
+                .body(Body::from(serde_json::to_string(&question).unwrap()))
                 .unwrap(),
         )
         .await
@@ -34,7 +31,7 @@ async fn test_add_question(db_pool: PgPool) {
     assert_eq!(response.status(), StatusCode::OK);
 }
 
-#[sqlx::test(fixtures("questions"))]
+#[sqlx::test(fixtures("0001_questions"))]
 async fn test_get_questions(db_pool: PgPool) {
     let app = app(db_pool).await;
 
@@ -56,7 +53,7 @@ async fn test_get_questions(db_pool: PgPool) {
     assert!(!questions.is_empty());
 }
 
-#[sqlx::test(fixtures("questions"))]
+#[sqlx::test(fixtures("0001_questions"))]
 async fn test_get_question_by_id(db_pool: PgPool) {
     let app = app(db_pool).await;
 
@@ -78,7 +75,7 @@ async fn test_get_question_by_id(db_pool: PgPool) {
     assert_eq!(question.id.0, 1);
 }
 
-#[sqlx::test(fixtures("questions"))]
+#[sqlx::test(fixtures("0001_questions"))]
 async fn test_update_question(db_pool: PgPool) {
     let mut app = app(db_pool).await;
 
@@ -95,7 +92,9 @@ async fn test_update_question(db_pool: PgPool) {
                 .method(http::Method::PUT)
                 .uri("/question")
                 .header(http::header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
-                .body(Body::from(serde_json::to_string(&updated_question).unwrap()))
+                .body(Body::from(
+                    serde_json::to_string(&updated_question).unwrap(),
+                ))
                 .unwrap(),
         )
         .await
@@ -104,11 +103,10 @@ async fn test_update_question(db_pool: PgPool) {
     assert_eq!(response.status(), StatusCode::OK);
 }
 
-#[sqlx::test(fixtures("questions"))]
+#[sqlx::test(fixtures("0001_questions"))]
 async fn test_delete_question(db_pool: PgPool) {
     println!("In test delete");
     let app = app(db_pool).await;
-
 
     let query_uri = format!("/question?question_id=1");
 
@@ -129,7 +127,7 @@ async fn test_delete_question(db_pool: PgPool) {
     assert_eq!(response.status(), StatusCode::OK);
 }
 
-#[sqlx::test(fixtures("questions", "answers"))]
+#[sqlx::test(fixtures("0001_questions", "0002_answers"))]
 async fn test_create_answer(db_pool: PgPool) {
     let app = app(db_pool).await;
 

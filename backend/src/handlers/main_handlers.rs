@@ -1,18 +1,18 @@
 use axum::extract::{Path, Query, State};
-use axum::response::Html;
 use axum::Json;
+use axum::response::Html;
 use jsonwebtoken::Header;
 use serde_json::{json, Value};
 use tera::Context;
 use tracing::error;
 
-use crate::answer::{Answer, CreateAnswer};
 use crate::db::Store;
 use crate::error::AppError;
 use crate::get_timestamp_after_8_hours;
-use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
+use crate::models::answer::{Answer, CreateAnswer};
+use crate::models::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
+use crate::models::user::{Claims, KEYS, User, UserSignup};
 use crate::template::TEMPLATES;
-use crate::user::{Claims, KEYS, User, UserSignup};
 
 #[allow(dead_code)]
 pub async fn root() -> Html<String> {
@@ -85,7 +85,7 @@ pub async fn create_answer(
 }
 
 pub async fn register(
-    State(mut database) : State<Store>,
+    State(database) : State<Store>,
     Json(credentials): Json<UserSignup>
 ) -> Result<Json<Value>, AppError> {
 
@@ -112,7 +112,7 @@ pub async fn register(
 }
 
 pub async fn login(
-    State(mut database) : State<Store>,
+    State(database) : State<Store>,
     Json(creds): Json<User>
 ) -> Result<Json<Value>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
