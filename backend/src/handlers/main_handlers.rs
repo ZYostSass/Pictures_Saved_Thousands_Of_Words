@@ -1,5 +1,6 @@
+use argon2::Config;
 use axum::extract::{Path, Query, State};
-use axum::response::Html;
+use axum::response::{Html, Redirect};
 use axum::Json;
 use jsonwebtoken::Header;
 use serde_json::{json, Value};
@@ -86,8 +87,10 @@ pub async fn create_answer(
 
 pub async fn register(
     State(database): State<Store>,
-    Json(credentials): Json<UserSignup>,
+    Json(mut credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
+    let salt = std::env::var("SALT").expect("Missing SALT");
+
     // TODO: We should also check to validate other things at some point like email address being in right format
 
     if credentials.email.is_empty() || credentials.password.is_empty() {
@@ -105,6 +108,21 @@ pub async fn register(
         return Err(AppError::UserAlreadyExists);
     }
 
+    // hash password
+    let hash_config = Config::default();
+    let hash = match argon2::hash_encoded(
+        credentials.password.as_bytes(),
+        salt.as_bytes(),
+        &hash_config,
+    ) {
+        Ok(result) => result,
+        Err(_) => {
+            return Err(AppError::Any(anyhow::anyhow!("Password hashing failed")));
+        }
+    };
+
+    credentials.password = hash;
+
     let new_user = database.create_user(credentials).await?;
     Ok(new_user)
 }
@@ -119,19 +137,27 @@ pub async fn login(
 
     let existing_user = database.get_user(&creds.email).await?;
 
-    if existing_user.password != creds.password {
-        Err(AppError::MissingCredentials)
-    } else {
-        // at this point we've authenticated the user's identity
-        // create JWT to return
-        let claims = Claims {
-            id: 0,
-            email: creds.email.to_owned(),
-            exp: get_timestamp_after_8_hours(),
+    let is_password_correct =
+        match argon2::verify_encoded(&*existing_user.password, creds.password.as_bytes()) {
+            Ok(result) => result,
+            Err(_) => {
+                return Err(AppError::Any(anyhow::anyhow!("Error verifying password")));
+            }
         };
 
-        let token = jsonwebtoken::encode(&Header::default(), &claims, &KEYS.encoding)
-            .map_err(|_| AppError::MissingCredentials)?;
-        Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
+    if !is_password_correct {
+        return Err(AppError::Any(anyhow::anyhow!("Password incorrect")));
     }
+
+    // at this point we've authenticated the user's identity
+    // create JWT to return
+    let claims = Claims {
+        id: 0,
+        email: creds.email.to_owned(),
+        exp: get_timestamp_after_8_hours(),
+    };
+
+    let token = jsonwebtoken::encode(&Header::default(), &claims, &KEYS.encoding)
+        .map_err(|_| AppError::MissingCredentials)?;
+    Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
 }

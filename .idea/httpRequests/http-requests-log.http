@@ -1,0 +1,767 @@
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064922.200.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 96
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-08-02T064920.200.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064547.500.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064448.401.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064353.401.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 96
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-08-02T064349.200.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064319.401.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password"
+}
+
+<> 2023-08-02T064115.500.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 96
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-08-02T064032.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T060355.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T060253.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T054752.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T054628.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T053757.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T053730.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T053607.200.json
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+###
+
+GET http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 22
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "question_id": 1
+}
+
+<> 2023-08-02T050750.422.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 89
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is another answer comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+<> 2023-08-02T044042.200.json
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 89
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is another answer comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+<> 2023-08-02T044040.200.json
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 89
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is another answer comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+<> 2023-08-02T042211.200.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 84
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is an answer comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+<> 2023-08-02T042153.200.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 76
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is a comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+<> 2023-08-02T031306.200.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 78
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "content": "This is a comment",
+  "reference": {
+    "Question": "1"
+  }
+}
+
+<> 2023-08-02T031256.422.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 0
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-08-02T030813.400.txt
+
+###
+
+POST http://localhost:3000/comments
+Content-Type: application/json
+Content-Length: 0
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 97
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail1@email.com",
+  "password": "password2",
+  "confirm_password": "password"
+}
+
+<> 2023-07-31T170223.401.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 95
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-07-31T170146.401.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 95
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "newemail@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-07-31T170124.200.json
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMzMyQGVtYWlsLmNvbSIsImV4cCI6MTY5MDg2MDk2OX0.SVo9rHC3kLzpmqkgQEDaveRXMrx4LgtdIisI_eosCXs
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T143629.200.txt
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhfebGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMzMyQGVtYWlsLmNvbSIsImV4cCI6MTY5MDg2MDk2OX0.SVo9rHC3kLzpmqkgQEDaveRXMrx4LgtdIisI_eosCXs
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T143625.401.json
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMzMyQGVtYWlsLmNvbSIsImV4cCI6MTY5MDg2MDk2OX0.SVo9rHC3kLzpmqkgQEDaveRXMrx4LgtdIisI_eosCXs
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T143621.200.txt
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 61
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email332@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T143609.200.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 61
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email332@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T143443.200.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 95
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email332@email.com",
+  "password": "password",
+  "confirm_password": "password"
+}
+
+<> 2023-07-31T143259.200.json
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMzMyQGVtYWlsLmNvbSIsImV4cCI6MTY5MDg1OTg1Nn0.9P4OVgaWN1rV2uw-ADNXxexwPgYk2Ec1-52dINIvh9U
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T141755.200.txt
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 61
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email332@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T141736.200.json
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMzMyQGVtYWlsLmNvbSIsImV4cCI6MTY5MDg1OTY0M30.PMTqKl6HbUP4X25svNZYXZj18ZkU9-cUYkuKUHn3Q-A"
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T141726.401.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 61
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email332@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T141403.200.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 89
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+"email": "email332@email.com",
+"password": "password",
+"confirm_password": "password"
+}
+
+<> 2023-07-31T141401.401.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 89
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+"email": "email332@email.com",
+"password": "password",
+"confirm_password": "password"
+}
+
+<> 2023-07-31T140641.200.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 88
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+"email": "email32@email.com",
+"password": "password",
+"confirm_password": "password"
+}
+
+<> 2023-07-31T140349.200.json
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+Content-Length: 87
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+"email": "email2@email.com",
+"password": "password",
+"confirm_password": "password"
+}
+
+<> 2023-07-31T140342.401.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 60
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email22@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T140333.503.json
+
+###
+
+GET http://localhost:3000/protected
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMkBlbWFpbC5jb20iLCJleHAiOjE2OTA4NTY3NjN9.iPSXKcRTxa111eec518QMgEOK53NDZRmnxE7i2IFMMc
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T132722.200.txt
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 59
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email2@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T132603.200.json
+
+###
+
+GET http://localhost:3000/protected
+Accept: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-07-31T132515.401.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 59
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email2@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T132451.200.json
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+Content-Length: 59
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "email": "email2@email.com",
+  "password": "password"
+}
+
+<> 2023-07-31T065450.200.json
+
+###
+
