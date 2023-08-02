@@ -12,7 +12,7 @@ use crate::error::AppError;
 use crate::get_timestamp_after_8_hours;
 use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
 use crate::template::TEMPLATES;
-use crate::user::{Claims, KEYS, User, UserSignup};
+use crate::user::{Claims, User, UserSignup, KEYS};
 
 #[allow(dead_code)]
 pub async fn root() -> Html<String> {
@@ -85,18 +85,17 @@ pub async fn create_answer(
 }
 
 pub async fn register(
-    State(mut database) : State<Store>,
-    Json(credentials): Json<UserSignup>
+    State(mut database): State<Store>,
+    Json(credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
-
     // We should also check to validate other things at some point like email address being in right format
 
     if credentials.email.is_empty() || credentials.password.is_empty() {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     if credentials.password != credentials.confirm_password {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     // Check to see if there is already a user in the database with the given email address
@@ -108,15 +107,14 @@ pub async fn register(
 
     let new_user = database.create_user(credentials).await?;
     Ok(new_user)
-
 }
 
 pub async fn login(
-    State(mut database) : State<Store>,
-    Json(creds): Json<User>
+    State(mut database): State<Store>,
+    Json(creds): Json<User>,
 ) -> Result<Json<Value>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     let existing_user = database.get_user(&creds.email).await?;
@@ -136,5 +134,11 @@ pub async fn login(
             .map_err(|_| AppError::MissingCredentials)?;
         Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
     }
+}
 
+pub async fn protected(claims: Claims) -> Result<String, AppError> {
+    Ok(format!(
+        "Welcome to the PROTECTED area :) \n Your claim data is: {}",
+        claims
+    ))
 }
