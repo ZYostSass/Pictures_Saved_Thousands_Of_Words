@@ -8,16 +8,15 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::db::new_pool;
+use crate::routes::main_routes;
 
-pub mod answer;
 pub mod db;
 pub mod error;
 pub mod handlers;
 pub mod layers;
-pub mod question;
-pub mod routes;
+mod models;
+mod routes;
 mod template;
-mod user;
 
 pub async fn run_backend() {
     dotenv().ok();
@@ -25,7 +24,7 @@ pub async fn run_backend() {
 
     let addr = get_host_from_env();
 
-    let app = routes::app(new_pool().await).await;
+    let app = main_routes::app(new_pool().await).await;
 
     info!("Listening...");
 
@@ -62,10 +61,11 @@ fn init_logging() {
 
 pub fn get_timestamp_after_8_hours() -> u64 {
     let now = SystemTime::now();
-    let since_epoch = now.duration_since(UNIX_EPOCH)
+    let since_epoch = now
+        .duration_since(UNIX_EPOCH)
         .expect("Time somehow went backwards");
     // 8 hours later
-    let eight_hours_from_now = since_epoch + Duration::from_secs(60*60*8);
+    let eight_hours_from_now = since_epoch + Duration::from_secs(60 * 60 * 8);
     eight_hours_from_now.as_secs()
 }
 

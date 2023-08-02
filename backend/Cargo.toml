@@ -29,7 +29,7 @@ reqwest = { version = "0.11.13", features = ["json"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_derive = "1.0"
 serde_json = "1.0"
-sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres", "chrono", "json"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "json"] }
 tera = "1"
 termcolor = "1.2.0"
 tokio = { version = "1.0", features = ["full"] }
@@ -40,3 +40,18 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uuid = { version = "1.3.0", features = ["serde", "v4"] }
 regex = "1.9.1"
+rust-argon2 = "1.0.0"
+
+[package.metadata.commands]
+# Drops db, creates db, runs all normal migrations, not seeds
+reset = "sqlx database reset -y && sqlx migrate run --source ./tests/fixtures --ignore-missing "
+
+addMigration = { cmd = "sqlx migrate add -r  $name", args = ["name"] }
+# Note here we add WITHOUT the -r because we don't need to revert seeds
+addSeed = { cmd = "sqlx migrate add  --sequential --source ./tests/fixtures $name ", args = ["name"] }
+# We use --source to point the migrations to our test fixtures and ignore-missing to ignore the plain migrations
+seed = "sqlx migrate run --source ./tests/fixtures --ignore-missing"
+migrate = "sqlx migrate run --ignore-missing"
+revert = "sqlx migrate revert --ignore-missing"
+test = "cargo nextest run"
+

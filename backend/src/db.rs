@@ -1,15 +1,15 @@
-use std::sync::{Arc, Mutex, RwLock};
 use axum::Json;
 use serde_json::Value;
+use std::sync::{Arc, Mutex, RwLock};
 
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use tracing::info;
 
-use crate::answer::{Answer, AnswerId};
 use crate::error::AppError;
-use crate::question::{IntoQuestionId, Question, QuestionId, UpdateQuestion};
-use crate::user::{User, UserSignup};
+use crate::models::answer::{Answer, AnswerId};
+use crate::models::question::{IntoQuestionId, Question, QuestionId, UpdateQuestion};
+use crate::models::user::{User, UserSignup};
 
 #[derive(Clone)]
 pub struct Store {
@@ -210,9 +210,9 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
                 SELECT email, password FROM users WHERE email = $1
             "#,
         )
-            .bind(email)
-            .fetch_one(&self.conn_pool)
-            .await?;
+        .bind(email)
+        .fetch_one(&self.conn_pool)
+        .await?;
 
         Ok(user)
     }
@@ -229,7 +229,9 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         if result.rows_affected() < 1 {
             Err(AppError::InternalServerError)
         } else {
-            Ok(Json(serde_json::json!({"message": "User created successfully!"})))
+            Ok(Json(
+                serde_json::json!({"message": "User created successfully!"}),
+            ))
         }
     }
 }

@@ -1,3 +1,4 @@
+use argon2::Config;
 use axum::extract::{Path, Query, State};
 use axum::response::Html;
 use axum::Json;
@@ -6,13 +7,16 @@ use serde_json::{json, Value};
 use tera::Context;
 use tracing::error;
 
-use crate::answer::{Answer, CreateAnswer};
 use crate::db::Store;
 use crate::error::AppError;
 use crate::get_timestamp_after_8_hours;
-use crate::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
+use crate::models::answer::{Answer, CreateAnswer};
+use crate::models::question::{
+    CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion,
+};
+use crate::models::user::{Claims, User, UserSignup, KEYS};
+
 use crate::template::TEMPLATES;
-use crate::user::{Claims, User, UserSignup, KEYS};
 
 #[allow(dead_code)]
 pub async fn root() -> Html<String> {
@@ -76,8 +80,6 @@ pub async fn create_answer(
     State(mut am_database): State<Store>,
     Json(answer): Json<CreateAnswer>,
 ) -> Result<Json<Answer>, AppError> {
-    dbg!("GOT CREATE ANSWER:");
-    dbg!(&answer);
     let new_answer = am_database
         .add_answer(answer.content, answer.question_id)
         .await?;
@@ -86,7 +88,7 @@ pub async fn create_answer(
 
 pub async fn register(
     State(mut database): State<Store>,
-    Json(credentials): Json<UserSignup>,
+    Json(mut credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
     // We should also check to validate other things at some point like email address being in right format
 
@@ -105,6 +107,24 @@ pub async fn register(
         return Err(AppError::UserAlreadyExists);
     }
 
+    // Here we're assured that our credentials are valid and the user doesn't already exist
+    // hash their password
+    let hash_config = Config::default();
+    let salt = std::env::var("SALT").expect("Missing SALT");
+    let hashed_password = match argon2::hash_encoded(
+        credentials.password.as_bytes(),
+        // If you'd like unique salts per-user, simply pass &[] and argon will generate them for you
+        salt.as_bytes(),
+        &hash_config,
+    ) {
+        Ok(result) => result,
+        Err(_) => {
+            return Err(AppError::Any(anyhow::anyhow!("Password hashing failed")));
+        }
+    };
+
+    credentials.password = hashed_password;
+
     let new_user = database.create_user(credentials).await?;
     Ok(new_user)
 }
@@ -119,21 +139,29 @@ pub async fn login(
 
     let existing_user = database.get_user(&creds.email).await?;
 
-    if existing_user.password != creds.password {
-        Err(AppError::MissingCredentials)
-    } else {
-        // at this point we've authenticated the user's identity
-        // create JWT to return
-        let claims = Claims {
-            id: 0,
-            email: creds.email.to_owned(),
-            exp: get_timestamp_after_8_hours(),
+    let is_password_correct =
+        match argon2::verify_encoded(&*existing_user.password, creds.password.as_bytes()) {
+            Ok(result) => result,
+            Err(_) => {
+                return Err(AppError::InternalServerError);
+            }
         };
 
-        let token = jsonwebtoken::encode(&Header::default(), &claims, &KEYS.encoding)
-            .map_err(|_| AppError::MissingCredentials)?;
-        Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
+    if !is_password_correct {
+        return Err(AppError::InvalidPassword);
     }
+
+    // at this point we've authenticated the user's identity
+    // create JWT to return
+    let claims = Claims {
+        id: 0,
+        email: creds.email.to_owned(),
+        exp: get_timestamp_after_8_hours(),
+    };
+
+    let token = jsonwebtoken::encode(&Header::default(), &claims, &KEYS.encoding)
+        .map_err(|_| AppError::MissingCredentials)?;
+    Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
 }
 
 pub async fn protected(claims: Claims) -> Result<String, AppError> {

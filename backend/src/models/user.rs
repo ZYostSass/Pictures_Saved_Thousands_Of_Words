@@ -42,7 +42,7 @@ where
 {
     type Rejection = AppError;
 
-    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         //extract a token claims from our Authorization header
         let TypedHeader(Authorization(bearer)) = parts
             .extract::<TypedHeader<Authorization<Bearer>>>()

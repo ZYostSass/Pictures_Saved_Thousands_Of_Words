@@ -4,7 +4,6 @@ use axum::Router;
 use http::StatusCode;
 use hyper::Body;
 use sqlx::PgPool;
-use tracing::info;
 
 use crate::db::Store;
 use crate::handlers::root;
@@ -12,8 +11,6 @@ use crate::{handlers, layers};
 
 pub async fn app(pool: PgPool) -> Router {
     let db = Store::with_pool(pool);
-
-    info!("Seeded database");
 
     let (cors_layer, trace_layer) = layers::get_layers();
 

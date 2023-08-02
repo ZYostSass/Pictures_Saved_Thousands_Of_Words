@@ -53,4 +53,5 @@ Content-Type: application/json
 GET http://localhost:3000/protected
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer 1eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MCwiZW1haWwiOiJuZXdlbWFpbDEyQGVtYWlsLmNvbSIsImV4cCI6MTY5MTAzNzM1MX0.GO4igAuDbugXkgPfw7Hx_PEARNQZrPqfH5TX1N-rvpg
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MCwiZW1haWwiOiJuZXdlbWFpbDEyQGVtYWlsLmNvbSIsImV4cCI6MTY5MTAzOTU3NX0.fR7E3QXHfBGBe0iaW-p8hxKZIl6dcXkOcZrVfORxttQ
+
