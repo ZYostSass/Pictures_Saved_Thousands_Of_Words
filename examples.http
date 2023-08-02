@@ -56,7 +56,7 @@ POST http://localhost:3000/comments
 Content-Type: application/json
 
 {
-  "content": "This is an answer comment",
+  "content": "This is another answer comment",
   "reference": {
     "Question": 1
   }

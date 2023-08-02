@@ -4,14 +4,14 @@ use crate::AppResult;
 use axum::Json;
 use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
-use sqlx::PgPool;
+use sqlx::{PgPool, Row};
 use tracing::info;
 
 use crate::error::AppError;
 use crate::models::answer::{Answer, AnswerId};
+use crate::models::comment::{Comment, CommentId, CommentReference};
 use crate::models::question::{IntoQuestionId, Question, QuestionId, UpdateQuestion};
 use crate::models::user::{User, UserSignup};
-use crate::routes::comment_routes::{AddComment, Comment};
 
 #[derive(Clone)]
 pub struct Store {
@@ -237,29 +237,51 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         }
     }
 
-    pub async fn create_comment(&self, comment: AddComment) -> AppResult<Comment> {
-        todo!()
-        // let result = sqlx::query!(
-        //     r#"
-        //     INSERT INTO comments(content, question_id, user_id)
-        //     VALUES ($1, $2, $3)
-        //     RETURNING *
-        //     "#,
-        //     comment.content,
-        //     comment.question_id.0,
-        //     comment.user_id.0,
-        // )
-        // .fetch_one(&self.conn_pool)
-        // .await?;
-        //
-        // let comment = Comment {
-        //     id: CommentId(result.id),
-        //     content: result.content,
-        //     question_id: QuestionId(result.question_id),
-        //     user_id: UserId(result.user_id),
-        // };
-        //
-        // Ok(comment)
+    //     let res = sqlx::query!(
+    //             r#"INSERT INTO "questions"(title, content, tags)
+    //            VALUES ($1, $2, $3)
+    //            RETURNING *
+    //         "#,
+    //             title,
+    //             content,
+    //             tags.as_deref()
+    //         )
+    //     .fetch_one(&self.conn_pool)
+    //     .await?;
+    //
+    //     let new_question = Question {
+    //     id: QuestionId(res.id),
+    //     title: res.title,
+    //     content: res.content,
+    //     tags: res.tags,
+    // };
+
+    pub async fn create_comment(&self, comment: Comment) -> AppResult<Comment> {
+        let (question_id, answer_id) = match &comment.reference {
+            CommentReference::Question(qid) => (Some(qid.0), None),
+            CommentReference::Answer(aid) => (None, Some(aid.0)),
+        };
+
+        let res = sqlx::query(
+            r#"
+        INSERT INTO comments (content, question_id, answer_id)
+        VALUES ($1, $2, $3)
+        RETURNING *
+        "#,
+        )
+        .bind(comment.content)
+        .bind(question_id)
+        .bind(answer_id)
+        .fetch_one(&self.conn_pool)
+        .await?;
+
+        let comment = Comment {
+            id: Some(CommentId(res.get("id"))),
+            content: res.get("content"),
+            reference: comment.reference,
+        };
+
+        Ok(comment)
     }
 }
 
