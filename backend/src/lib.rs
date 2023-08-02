@@ -78,11 +78,11 @@ pub fn get_timestamp_after_8_hours() -> u64 {
 
 pub type AppResult<T> = Result<T, AppError>;
 
+/// Basic macro to create a newtype for a database ID.
 #[macro_export]
 macro_rules! make_db_id {
     ($name:ident) => {
-        use paste::paste;
-        paste! {
+        paste::paste! {
             #[derive(
                 Clone,
                 Copy,

@@ -91,13 +91,11 @@ SELECT * FROM questions
 
         let questions: Vec<_> = rows
             .into_iter()
-            .map(|row| {
-                Question {
-                    id: row.id.into(), // Assuming you have a From<u32> for QuestionId
-                    title: row.title,
-                    content: row.content,
-                    tags: row.tags,
-                }
+            .map(|row| Question {
+                id: row.id.into(),
+                title: row.title,
+                content: row.content,
+                tags: row.tags,
             })
             .collect();
 
@@ -120,7 +118,7 @@ SELECT * FROM questions
         .await?;
 
         let question = Question {
-            id: row.id.into(), // Assuming you have a From<u32> for QuestionId
+            id: row.id.into(),
             title: row.title,
             content: row.content,
             tags: row.tags,
@@ -240,25 +238,6 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
             ))
         }
     }
-
-    //     let res = sqlx::query!(
-    //             r#"INSERT INTO "questions"(title, content, tags)
-    //            VALUES ($1, $2, $3)
-    //            RETURNING *
-    //         "#,
-    //             title,
-    //             content,
-    //             tags.as_deref()
-    //         )
-    //     .fetch_one(&self.conn_pool)
-    //     .await?;
-    //
-    //     let new_question = Question {
-    //     id: QuestionId(res.id),
-    //     title: res.title,
-    //     content: res.content,
-    //     tags: res.tags,
-    // };
 
     pub async fn create_comment(&self, comment: Comment) -> AppResult<Comment> {
         let (question_id, answer_id) = match &comment.reference {

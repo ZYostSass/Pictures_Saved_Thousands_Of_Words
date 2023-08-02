@@ -11,7 +11,6 @@ use crate::models::question::GetQuestionById;
 use crate::routes::main_routes::merged_route;
 use crate::AppResult;
 
-//#[axum::debug_handler]
 pub fn comment_routes() -> Router<Store> {
     async fn create_new_comment(
         State(db): State<Store>,

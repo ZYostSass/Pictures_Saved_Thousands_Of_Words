@@ -1,6 +1,6 @@
 use axum::extract::{Path, Query, State};
-use axum::Json;
 use axum::response::Html;
+use axum::Json;
 use jsonwebtoken::Header;
 use serde_json::{json, Value};
 use tera::Context;
@@ -10,8 +10,10 @@ use crate::db::Store;
 use crate::error::AppError;
 use crate::get_timestamp_after_8_hours;
 use crate::models::answer::{Answer, CreateAnswer};
-use crate::models::question::{CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion};
-use crate::models::user::{Claims, KEYS, User, UserSignup};
+use crate::models::question::{
+    CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion,
+};
+use crate::models::user::{Claims, User, UserSignup, KEYS};
 use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
@@ -76,8 +78,6 @@ pub async fn create_answer(
     State(mut am_database): State<Store>,
     Json(answer): Json<CreateAnswer>,
 ) -> Result<Json<Answer>, AppError> {
-    dbg!("GOT CREATE ANSWER:");
-    dbg!(&answer);
     let new_answer = am_database
         .add_answer(answer.content, answer.question_id)
         .await?;
@@ -85,18 +85,17 @@ pub async fn create_answer(
 }
 
 pub async fn register(
-    State(database) : State<Store>,
-    Json(credentials): Json<UserSignup>
+    State(database): State<Store>,
+    Json(credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
-
-    // We should also check to validate other things at some point like email address being in right format
+    // TODO: We should also check to validate other things at some point like email address being in right format
 
     if credentials.email.is_empty() || credentials.password.is_empty() {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     if credentials.password != credentials.confirm_password {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     // Check to see if there is already a user in the database with the given email address
@@ -108,15 +107,14 @@ pub async fn register(
 
     let new_user = database.create_user(credentials).await?;
     Ok(new_user)
-
 }
 
 pub async fn login(
-    State(database) : State<Store>,
-    Json(creds): Json<User>
+    State(database): State<Store>,
+    Json(creds): Json<User>,
 ) -> Result<Json<Value>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
-        return Err(AppError::MissingCredentials)
+        return Err(AppError::MissingCredentials);
     }
 
     let existing_user = database.get_user(&creds.email).await?;
@@ -136,5 +134,4 @@ pub async fn login(
             .map_err(|_| AppError::MissingCredentials)?;
         Ok(Json(json!({ "access_token" : token, "type": "Bearer"})))
     }
-
 }
