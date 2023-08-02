@@ -61,3 +61,11 @@ Content-Type: application/json
     "Question": 1
   }
 }
+
+###
+GET http://localhost:3000/comments
+Content-Type: application/json
+
+{
+  "question_id": 1
+}

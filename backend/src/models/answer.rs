@@ -1,7 +1,8 @@
-use crate::make_db_id;
-use crate::models::question::QuestionId;
 use derive_more::Display;
 use serde::{Deserialize, Serialize};
+
+use crate::make_db_id;
+use crate::models::question::QuestionId;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Answer {

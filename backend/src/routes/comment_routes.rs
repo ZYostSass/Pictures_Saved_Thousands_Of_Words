@@ -1,18 +1,15 @@
 use axum::extract::State;
-use axum::routing::post;
+use axum::routing::{get, post};
 use axum::{Json, Router};
-use serde_derive::{Deserialize, Serialize};
-use tracing::info;
+pub use axum_macros::debug_handler;
 
 use crate::db::Store;
 use crate::error::AppError;
-use crate::models::answer::AnswerId;
-use crate::models::question::QuestionId;
-
 use crate::models::comment::Comment;
+use crate::models::page::PagePackage;
+use crate::models::question::GetQuestionById;
 use crate::routes::main_routes::merged_route;
 use crate::AppResult;
-pub use axum_macros::debug_handler;
 
 //#[axum::debug_handler]
 pub fn comment_routes() -> Router<Store> {
@@ -29,5 +26,15 @@ pub fn comment_routes() -> Router<Store> {
         Ok(comment)
     }
 
-    merged_route("/comments", post(create_new_comment))
+    #[axum::debug_handler]
+    async fn get_comments(
+        State(db): State<Store>,
+        Json(question): Json<GetQuestionById>,
+    ) -> AppResult<PagePackage> {
+        let res = db.get_page_for_question(question).await?;
+
+        Ok(res)
+    }
+
+    merged_route("/comments", post(create_new_comment)).route("/comments", get(get_comments))
 }

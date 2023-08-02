@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex, RwLock};
 
-use crate::AppResult;
 use axum::Json;
+use futures::TryStreamExt;
 use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Row};
@@ -10,8 +10,12 @@ use tracing::info;
 use crate::error::AppError;
 use crate::models::answer::{Answer, AnswerId};
 use crate::models::comment::{Comment, CommentId, CommentReference};
-use crate::models::question::{IntoQuestionId, Question, QuestionId, UpdateQuestion};
+use crate::models::page::{AnswerWithComments, PagePackage, QuestionWithComments};
+use crate::models::question::{
+    GetQuestionById, IntoQuestionId, Question, QuestionId, UpdateQuestion,
+};
 use crate::models::user::{User, UserSignup};
+use crate::AppResult;
 
 #[derive(Clone)]
 pub struct Store {
@@ -282,6 +286,100 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         };
 
         Ok(comment)
+    }
+
+    pub(crate) async fn get_page_for_question(
+        &self,
+        question: GetQuestionById,
+    ) -> AppResult<PagePackage> {
+        let question_row = sqlx::query("SELECT * FROM questions WHERE id = $1")
+            .bind(question.question_id)
+            .fetch_one(&self.conn_pool)
+            .await?;
+
+        let answer_rows = sqlx::query("SELECT * FROM answers WHERE question_id = $1")
+            .bind(question.question_id)
+            .fetch_all(&self.conn_pool)
+            .await?;
+
+        let comments_rows = sqlx::query("SELECT * FROM comments WHERE question_id = $1 OR answer_id IN (SELECT id FROM answers WHERE question_id = $1)")
+            .bind(question.question_id)
+            .fetch_all(&self.conn_pool)
+            .await?;
+
+        let question = Question {
+            id: QuestionId(question_row.get("id")),
+            title: question_row.get("title"),
+            content: question_row.get("content"),
+            tags: question_row.get("tags"),
+        };
+
+        // Deserialize the answers
+        let mut answers_with_comments = Vec::new();
+        for row in answer_rows {
+            let answer = Answer {
+                id: AnswerId(row.get("id")),
+                content: row.get("content"),
+                question_id: QuestionId(row.get("question_id")),
+            };
+
+            let comments_for_answer: Vec<Comment> = comments_rows
+                .iter()
+                .filter_map(|row| {
+                    if let Ok(answer_id) = row.try_get::<i32, _>("answer_id") {
+                        if answer_id == answer.id.0 {
+                            Some(Comment {
+                                id: Some(CommentId(row.get("id"))),
+                                content: row.get("content"),
+                                reference: CommentReference::Answer(AnswerId(answer_id)),
+                            })
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+
+            answers_with_comments.push(AnswerWithComments {
+                answer,
+                comments: comments_for_answer,
+            });
+        }
+
+        // Deserialize the comments for question
+        let comments_for_question: Vec<Comment> = comments_rows
+            .iter()
+            .filter_map(|row| {
+                if let Ok(question_id) = row.try_get::<i32, _>("question_id") {
+                    if question_id == question.id.0 {
+                        Some(Comment {
+                            id: Some(CommentId(row.get("id"))),
+                            content: row.get("content"),
+                            reference: CommentReference::Question(QuestionId(question_id)),
+                        })
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        let question_with_comments = QuestionWithComments {
+            question,
+            comments: comments_for_question,
+        };
+
+        // Build the page package
+        let package = PagePackage {
+            question: question_with_comments,
+            answers: answers_with_comments,
+        };
+
+        Ok(package)
     }
 }
 

@@ -1,6 +1,7 @@
-use crate::make_db_id;
 use derive_more::Display;
 use serde_derive::{Deserialize, Serialize};
+
+use crate::make_db_id;
 
 // This uses the `derive_more` crate to reduce the Display boilerplate (see below)
 #[derive(Clone, Debug, Display, Serialize, Deserialize, sqlx::FromRow)]

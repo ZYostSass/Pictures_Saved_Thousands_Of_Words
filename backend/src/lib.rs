@@ -2,12 +2,13 @@
 #![allow(unused_variables)]
 #![allow(dead_code)]
 
-use derive_more::Display;
-use dotenvy::dotenv;
-use serde_derive::{Deserialize, Serialize};
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
+use derive_more::Display;
+use dotenvy::dotenv;
+use serde_derive::{Deserialize, Serialize};
 use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
