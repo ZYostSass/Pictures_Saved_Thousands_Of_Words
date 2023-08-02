@@ -69,14 +69,24 @@ pub fn get_timestamp_after_8_hours() -> u64 {
     eight_hours_from_now.as_secs()
 }
 
-/*AUTH
-1) Ability to create a new user with a secure password
-2) Ability to login as that user via the password
-3) Authenticate already-logged-in-users
+// make_db_id!(QuestionId)
 
-Registration Flow
-1. User attempts to register by sending a new email address, a password, and a confirm_password
-2. We want to check to see if their password == confirm_password
-3.  We check to see if there's a user in the database with that email already
-4. Create a new user account by adding a new row to the user table
- */
+#[macro_export]
+macro_rules! make_db_id {
+    ($name:ident) => {
+        #[derive(
+            Clone,
+            Copy,
+            Debug,
+            sqlx::Type,
+            Display,
+            derive_more::Deref,
+            PartialEq,
+            Eq,
+            Hash,
+            Serialize,
+            Deserialize,
+        )]
+        pub struct $name(pub i32);
+    };
+}
