@@ -1,6 +1,7 @@
-use serde::{Deserialize, Serialize};
-
+use crate::make_db_id;
 use crate::models::question::QuestionId;
+use derive_more::Display;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Answer {
@@ -9,14 +10,7 @@ pub struct Answer {
     pub question_id: QuestionId,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AnswerId(pub i32);
-
-impl From<i32> for AnswerId {
-    fn from(value: i32) -> Self {
-        Self(value)
-    }
-}
+make_db_id!(AnswerId);
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CreateAnswer {

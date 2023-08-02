@@ -10,7 +10,7 @@ use crate::db::Store;
 use crate::handlers::main_handlers;
 use crate::handlers::main_handlers::root;
 use crate::layers;
-use crate::routes::comment_routes::{comment_routes, create_new_comment};
+use crate::routes::comment_routes::comment_routes;
 
 pub async fn app(pool: PgPool) -> Router {
     let db = Store::with_pool(pool);

@@ -43,3 +43,21 @@ Content-Type: application/json
 ###
 POST http://localhost:3000/comments
 Content-Type: application/json
+
+{
+  "content": "This is a question comment",
+  "reference": {
+    "Question": 1
+  }
+}
+
+###
+POST http://localhost:3000/comments
+Content-Type: application/json
+
+{
+  "content": "This is an answer comment",
+  "reference": {
+    "Question": 1
+  }
+}

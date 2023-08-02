@@ -8,7 +8,7 @@ use tower::ServiceExt;
 
 #[sqlx::test(fixtures("0001_questions"))]
 async fn test_add_question(db_pool: PgPool) {
-    let mut app = app(db_pool).await;
+    let app = app(db_pool).await;
 
     let question = CreateQuestion {
         title: "New Title".into(),
@@ -77,7 +77,7 @@ async fn test_get_question_by_id(db_pool: PgPool) {
 
 #[sqlx::test(fixtures("0001_questions"))]
 async fn test_update_question(db_pool: PgPool) {
-    let mut app = app(db_pool).await;
+    let app = app(db_pool).await;
 
     let updated_question = Question {
         id: 1.into(),

@@ -1,8 +1,9 @@
+use derive_more::Display;
+use dotenvy::dotenv;
+use serde_derive::{Deserialize, Serialize};
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-
-use dotenvy::dotenv;
 use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -11,15 +12,13 @@ use crate::db::new_pool;
 use crate::error::AppError;
 
 pub mod handlers;
-pub mod routes;
 pub mod models;
+pub mod routes;
 
 pub mod db;
 pub mod error;
 pub mod layers;
 mod template;
-
-
 
 pub async fn run_backend() {
     dotenv().ok();
@@ -64,11 +63,63 @@ fn init_logging() {
 
 pub fn get_timestamp_after_8_hours() -> u64 {
     let now = SystemTime::now();
-    let since_epoch = now.duration_since(UNIX_EPOCH)
+    let since_epoch = now
+        .duration_since(UNIX_EPOCH)
         .expect("Time somehow went backwards");
     // 8 hours later
-    let eight_hours_from_now = since_epoch + Duration::from_secs(60*60*8);
+    let eight_hours_from_now = since_epoch + Duration::from_secs(60 * 60 * 8);
     eight_hours_from_now.as_secs()
 }
 
 pub type AppResult<T> = Result<T, AppError>;
+
+#[macro_export]
+macro_rules! make_db_id {
+    ($name:ident) => {
+        use paste::paste;
+        paste! {
+            #[derive(
+                Clone,
+                Copy,
+                Debug,
+                sqlx::Type,
+                Display,
+                derive_more::Deref,
+                PartialEq,
+                Eq,
+                Hash,
+                Serialize,
+                Deserialize,
+            )]
+            pub struct $name(pub i32);
+
+            impl From<i32> for $name {
+                fn from(value: i32) -> Self {
+                    $name(value)
+                }
+            }
+
+            impl From<$name> for i32 {
+                fn from(value: $name) -> Self {
+                    value.0
+                }
+            }
+
+            pub trait [<Into $name>] {
+                fn into_id(self) -> $name;
+            }
+
+            impl [<Into $name>] for i32 {
+                fn into_id(self) -> $name {
+                    $name::from(self)
+                }
+            }
+
+            impl [<Into $name>] for $name {
+                fn into_id(self) -> $name {
+                    self
+                }
+            }
+        }
+    };
+}

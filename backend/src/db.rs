@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex, RwLock};
 
+use crate::AppResult;
 use axum::Json;
 use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
@@ -10,6 +11,7 @@ use crate::error::AppError;
 use crate::models::answer::{Answer, AnswerId};
 use crate::models::question::{IntoQuestionId, Question, QuestionId, UpdateQuestion};
 use crate::models::user::{User, UserSignup};
+use crate::routes::comment_routes::{AddComment, Comment};
 
 #[derive(Clone)]
 pub struct Store {
@@ -102,7 +104,7 @@ SELECT * FROM questions
         &mut self,
         id: T,
     ) -> Result<Question, AppError> {
-        let id = id.into_question_id();
+        let id = id.into_id();
 
         let row = sqlx::query!(
             r#"
@@ -189,7 +191,7 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
     }
 
     pub async fn delete_question(&mut self, question_id: i32) -> Result<(), AppError> {
-        let question_id = question_id.into_question_id();
+        let question_id = question_id.into_id();
         println!("DELETE - Question id is {}", &question_id);
         sqlx::query!(
             r#"
@@ -233,6 +235,31 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
                 serde_json::json!({"message": "User created successfully!"}),
             ))
         }
+    }
+
+    pub async fn create_comment(&self, comment: AddComment) -> AppResult<Comment> {
+        todo!()
+        // let result = sqlx::query!(
+        //     r#"
+        //     INSERT INTO comments(content, question_id, user_id)
+        //     VALUES ($1, $2, $3)
+        //     RETURNING *
+        //     "#,
+        //     comment.content,
+        //     comment.question_id.0,
+        //     comment.user_id.0,
+        // )
+        // .fetch_one(&self.conn_pool)
+        // .await?;
+        //
+        // let comment = Comment {
+        //     id: CommentId(result.id),
+        //     content: result.content,
+        //     question_id: QuestionId(result.question_id),
+        //     user_id: UserId(result.user_id),
+        // };
+        //
+        // Ok(comment)
     }
 }
 
