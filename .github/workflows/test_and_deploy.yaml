@@ -155,5 +155,9 @@ jobs:
             docker compose build --no-cache --compress
             docker compose up -d
             cd backend
-            cargo install cargo-commander
-            cargo cmd migrate
+            
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            source $HOME/.cargo/env
+            
+            cargo install sqlx-cli
+            sqlx migrate run
