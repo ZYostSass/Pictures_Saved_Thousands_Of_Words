@@ -1,4 +1,4 @@
-name: Doggr CICD
+name: Heap Overrun CICD
 
 on:
   push:
