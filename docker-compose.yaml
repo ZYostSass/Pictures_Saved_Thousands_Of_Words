@@ -9,10 +9,33 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 25
+
+  backend:
+    container_name: backend
+    build: ./backend/
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
     environment:
-      - POSTGRES_USER=rustweb
-      - POSTGRES_PASSWORD=rustweb
-      - POSTGRES_DB=postgres
+      # This prevents SQLX from trying to connect to database during compile
+      # We need to run cargo sqlx prepare first
+      - SQLX_OFFLINE=true
+      # Note the change here from @localhost to @postgres to match service name
+      - DATABASE_URL=postgres://rustweb:rustweb@postgres/postgres
+      # Instead of listening on "localhost" or "127.0.0.1" we want to listen on every interface
+      - API_HOST=0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   db:

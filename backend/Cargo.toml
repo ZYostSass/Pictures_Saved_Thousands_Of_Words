@@ -54,4 +54,5 @@ seed = "sqlx migrate run --source ./tests/fixtures --ignore-missing"
 migrate = "sqlx migrate run --ignore-missing"
 revert = "sqlx migrate revert --ignore-missing"
 test = "cargo nextest run"
-
+# This lets us build in "offline" mode with no actual DB connection (for deployment)
+prepare = "cargo sqlx prepare"
