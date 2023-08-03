@@ -151,6 +151,7 @@ jobs:
             export API_HOST=${{ secrets.API_HOST }}
             export API_PORT=${{ secrets.API_PORT }}
             export DATABASE_URL=${{ secrets.DATABASE_URL }}
+            export LOCAL_DATABASE_URL=${{ secrets.LOCAL_DATABASE_URL }}
             export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
@@ -173,4 +174,4 @@ jobs:
             source $HOME/.cargo/env
             
             cargo install sqlx-cli
-            sqlx migrate run --database-url $DATABASE_URL
+            sqlx migrate run --database-url $LOCAL_DATABASE_URL
