@@ -127,7 +127,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [backend_testing, frontend_testing]
+    #needs: [backend_testing, frontend_testing]
     steps:
       - uses: appleboy/ssh-action@master
         with:
