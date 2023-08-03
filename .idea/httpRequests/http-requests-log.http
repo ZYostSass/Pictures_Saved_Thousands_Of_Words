@@ -1,0 +1,34 @@
+POST http://doggr.pro:3000/question
+Content-Type: application/json
+Content-Length: 81
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "title": "a title",
+  "content": "Some content",
+  "tags": ["tag1", "tag2"]
+}
+
+<> 2023-08-03T142116.200.json
+
+###
+
+POST http://5.78.82.67:3000/question
+Content-Type: application/json
+Content-Length: 81
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "title": "a title",
+  "content": "Some content",
+  "tags": ["tag1", "tag2"]
+}
+
+<> 2023-08-03T142047.200.json
+
+###
+
