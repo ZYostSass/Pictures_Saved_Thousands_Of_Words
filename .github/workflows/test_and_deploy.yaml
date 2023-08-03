@@ -140,7 +140,7 @@ jobs:
             mkdir -p ~/workspace
             cd ~/workspace/
             rm -rf ./class_project
-            git clone --depth=1 https://github.com/pdx-cs-rust-web/class_project class_project  # Clone the latest
+            git clone --depth=1 --branch sslpractice https://github.com/pdx-cs-rust-web/class_project class_project  # Clone the latest
             cd class_project
             docker compose down
             docker compose build --no-cache --compress
