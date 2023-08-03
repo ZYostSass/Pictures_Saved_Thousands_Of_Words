@@ -140,6 +140,7 @@ jobs:
             echo 'export API_HOST=${{ secrets.API_HOST }}' >> ~/.bashrc
             echo 'export API_PORT=${{ secrets.API_PORT }}' >> ~/.bashrc
             echo 'export DATABASE_URL=${{ secrets.DATABASE_URL }}' >> ~/.bashrc
+            echo 'export LOCAL_DATABASE_URL=${{ secrets.LOCAL_DATABASE_URL }}' >> ~/.bashrc
             echo 'export POSTGRES_DB=${{ secrets.POSTGRES_DB }}' >> ~/.bashrc
             echo 'export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' >> ~/.bashrc
             echo 'export POSTGRES_USER=${{ secrets.POSTGRES_USER }}' >> ~/.bashrc
