@@ -147,6 +147,15 @@ jobs:
             echo 'export SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}' >> ~/.bashrc
             source ~/.bashrc
             
+            export API_HOST=${{ secrets.API_HOST }}
+            export API_PORT=${{ secrets.API_PORT }}
+            export DATABASE_URL=${{ secrets.DATABASE_URL }}
+            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            export SALT=${{ secrets.SALT }}
+            export SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}
+            
             mkdir -p ~/workspace
             cd ~/workspace/
             rm -rf ./class_project
