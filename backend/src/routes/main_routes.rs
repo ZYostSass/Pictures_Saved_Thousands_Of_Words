@@ -7,6 +7,7 @@ use sqlx::PgPool;
 
 use crate::db::Store;
 use crate::handlers::root;
+use crate::routes::comment_routes::comment_routes;
 use crate::{handlers, layers};
 
 pub async fn app(pool: PgPool) -> Router {
@@ -27,6 +28,7 @@ pub async fn app(pool: PgPool) -> Router {
         .route("/login", post(handlers::login))
         .route("/protected", get(handlers::protected))
         .route("/*_", get(handle_404))
+        .merge(comment_routes())
         .layer(cors_layer)
         .layer(trace_layer)
         .with_state(db)

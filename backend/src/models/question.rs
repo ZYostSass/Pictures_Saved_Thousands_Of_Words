@@ -1,5 +1,4 @@
 use crate::make_db_id;
-use derive_more::Display;
 use serde_derive::{Deserialize, Serialize};
 
 // This uses the `derive_more` crate to reduce the Display boilerplate (see below)
@@ -30,48 +29,7 @@ impl Question {
     }
 }
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    sqlx::Type,
-    Display,
-    derive_more::Deref,
-    PartialEq,
-    Eq,
-    Hash,
-    Serialize,
-    Deserialize,
-)]
-pub struct QuestionId(pub i32);
-
-impl From<i32> for QuestionId {
-    fn from(value: i32) -> Self {
-        QuestionId(value)
-    }
-}
-
-impl From<QuestionId> for i32 {
-    fn from(value: QuestionId) -> Self {
-        value.0
-    }
-}
-
-pub trait IntoQuestionId {
-    fn into_question_id(self) -> QuestionId;
-}
-
-impl IntoQuestionId for i32 {
-    fn into_question_id(self) -> QuestionId {
-        QuestionId::from(self)
-    }
-}
-
-impl IntoQuestionId for QuestionId {
-    fn into_question_id(self) -> QuestionId {
-        self
-    }
-}
+make_db_id!(QuestionId);
 
 // Clients use this to create new requests
 #[derive(Debug, Serialize, Deserialize)]
