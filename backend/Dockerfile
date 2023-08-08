@@ -19,5 +19,5 @@ RUN apt update \
 WORKDIR /app
 
 COPY --from=builder /app/backend/target/debug/backend ./
-
+COPY ./templates ./templates
 CMD ["/app/backend"]
