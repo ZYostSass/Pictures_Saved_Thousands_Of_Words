@@ -58,7 +58,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email {email} -d {domain} --agree-tos
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email caseybailey@gmail.com -d doggr.pro --agree-tos
 
 volumes:
   db:
