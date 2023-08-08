@@ -54,13 +54,26 @@ services:
     depends_on:
       - backend
 
+  nginx_certbot:
+    container_name: nginx_certbot
+    restart: unless-stopped
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+
   certbot:
     image: certbot/certbot
     container_name: certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email caseybailey@gmail.com -d doggr.pro --agree-tos
+    command: certonly --preferred-challenges dns --webroot -w /var/www/certbot --force-renewal --email caseybailey@gmail.com -d doggr.pro --agree-tos
     depends_on:
       - nginx
 
