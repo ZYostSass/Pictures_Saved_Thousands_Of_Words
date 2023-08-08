@@ -175,4 +175,4 @@ jobs:
             source $HOME/.cargo/env
             
             cargo install sqlx-cli
-            sqlx migrate run --database-url $LOCAL_DATABASE_URL
+            
