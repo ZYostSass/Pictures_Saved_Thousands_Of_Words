@@ -36,6 +36,7 @@ pub async fn run_backend() {
 
 fn get_host_from_env() -> SocketAddr {
     let host = std::env::var("API_HOST").unwrap();
+    println!("{}", &host);
     let api_host = IpAddr::from_str(&host).unwrap();
     let api_port: u16 = std::env::var("API_PORT")
         .expect("Could not find API_PORT in .env file")
