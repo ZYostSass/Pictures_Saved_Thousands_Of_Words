@@ -173,6 +173,7 @@ jobs:
             docker compose -f docker-compose.prod.yaml down
             docker compose -f docker-compose.prod.yaml build --no-cache --compress
             docker compose -f docker-compose.prod.yaml up -d
+            echo "Do not forget to migrate"
   
             
             
