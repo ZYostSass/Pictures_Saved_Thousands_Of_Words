@@ -52,11 +52,11 @@ services:
       - ./robocert/letsencrypt:/etc/letsencrypt
       - ./robocert/dnsrobocert:/etc/dnsrobocert
     depends_on:
-      - dnsrobocert
+      - robocert
 
-  dnsrobocert:
+  robocert:
     image: adferrand/dnsrobocert
-    container_name: dnsrobocert
+    container_name: robocert
     volumes:
       - ./robocert/letsencrypt:/etc/letsencrypt
       - ./robocert/dnsrobocert:/etc/dnsrobocert

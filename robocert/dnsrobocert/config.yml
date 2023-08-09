@@ -1,7 +1,7 @@
-draft: true
+draft: false
 acme:
   email_account: caseybailey@gmail.com
-  staging: true
+  staging: false
 profiles:
   - name: hetzner
     provider: hetzner
