@@ -2,7 +2,7 @@ name: Heap Overrun CICD
 
 on:
   push:
-    branches: [master, develop, sslpractice]
+    branches: [master, develop, sslpractice, sslpracticenew]
   pull_request:
     branches: [master, develop, sslpractice]
 
