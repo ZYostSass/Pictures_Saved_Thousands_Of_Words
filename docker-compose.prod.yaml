@@ -52,7 +52,7 @@ services:
       - ./robocert/letsencrypt:/etc/letsencrypt
       - ./robocert/dnsrobocert:/etc/dnsrobocert
     depends_on:
-      - certbot
+      - dnsrobocert
 
   dnsrobocert:
     image: adferrand/dnsrobocert
