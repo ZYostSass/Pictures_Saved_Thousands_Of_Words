@@ -168,7 +168,7 @@ jobs:
             mkdir -p ~/workspace
             cd ~/workspace/
             rm -rf ./class_project
-            git clone --depth=1 --branch sslpractice https://github.com/pdx-cs-rust-web/class_project class_project  # Clone the latest
+            git clone --depth=1 --branch sslpracticenew https://github.com/pdx-cs-rust-web/class_project class_project  # Clone the latest
             cd class_project
             docker compose -f docker-compose.prod.yaml down
             docker compose -f docker-compose.prod.yaml build --no-cache --compress
