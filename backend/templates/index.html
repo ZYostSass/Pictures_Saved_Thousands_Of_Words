@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+<body>
+{% if is_logged_in %}
+<h2>Dashboard</h2>
+<ul>
+    <li><a href="/questions">View All Questions</a></li>
+    <li><a href="/question">Add a Question</a></li>
+    <li><a href="/answer">Answer a Question</a></li>
+</ul>
+{% else %}
+<h2>Login</h2>
+<form action="/login" method="post">
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+    <input type="submit" value="Login">
+</form>
+{% endif %}
+</body>
+</html>
