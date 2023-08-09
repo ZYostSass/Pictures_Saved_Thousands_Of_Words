@@ -48,11 +48,13 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - ./wait-for-robocert.sh:/wait-for-robocert.sh # Mount the wait script
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./robocert/letsencrypt:/etc/letsencrypt
       - ./robocert/dnsrobocert:/etc/dnsrobocert
     depends_on:
       - robocert
+    command: ["/wait-for-robocert.sh"] # Override the default command
 
   robocert:
     image: adferrand/dnsrobocert
