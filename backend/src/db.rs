@@ -267,6 +267,25 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         Ok(comment)
     }
 
+    pub async fn get_all_question_pages(&self) -> Result<Vec<PagePackage>, AppError> {
+        let questions = sqlx::query("SELECT id from questions")
+            .fetch_all(&self.conn_pool)
+            .await?;
+
+        let mut res = Vec::new();
+
+        for row in questions {
+            let id = GetQuestionById {
+                question_id: row.get("id"),
+            };
+
+            let page = self.get_page_for_question(id).await?;
+            res.push(page)
+        }
+
+        Ok(res)
+    }
+
     pub async fn get_page_for_question(
         &self,
         question: GetQuestionById,

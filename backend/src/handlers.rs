@@ -1,7 +1,7 @@
 use argon2::Config;
 use axum::extract::{Path, Query, State};
 use axum::response::{Html, Response};
-use axum::Json;
+use axum::{Form, Json};
 use http::header::{LOCATION, SET_COOKIE};
 use http::{HeaderValue, StatusCode};
 use hyper::Body;
@@ -23,26 +23,28 @@ use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
 pub async fn root(
-    State(am_database): State<Store>,
+    State(mut am_database): State<Store>,
     OptionalClaims(claims): OptionalClaims,
 ) -> Result<Html<String>, AppError> {
     let mut context = Context::new();
-    // add all of our required data to the context
     context.insert("name", "Casey");
 
     let template_name = if let Some(claims_data) = claims {
-        context.insert("claims", &claims.data);
+        error!("Setting claims and is_logged_in is TRUE now");
+        context.insert("claims", &claims_data);
         context.insert("is_logged_in", &true);
-
+        // Get all the page data
         let page_packages = am_database.get_all_question_pages().await?;
         context.insert("page_packages", &page_packages);
-        "pages.html"
+
+        "pages.html" // Use the new template when logged in
     } else {
+        // Handle the case where the user isn't logged in
+        error!("is_logged_in is FALSE now");
         context.insert("is_logged_in", &false);
-        "index.html"
+        "index.html" // Use the original template when not logged in
     };
 
-    // render a given html template along with that context.
     let rendered = TEMPLATES
         .render(template_name, &context)
         .unwrap_or_else(|err| {
@@ -152,7 +154,7 @@ pub async fn register(
 
 pub async fn login(
     State(mut database): State<Store>,
-    Json(creds): Json<User>,
+    Form(creds): Form<User>,
 ) -> Result<Response<Body>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
         return Err(AppError::MissingCredentials);
@@ -192,10 +194,11 @@ pub async fn login(
 
     response
         .headers_mut()
-        .insert(LOCATION, HeaderValue::from_static("/"))
-        .unwrap()
-        .insert(SET_COOKIE, HeaderValue::from_str(&cookie.to_string()))
-        .unwrap();
+        .insert(LOCATION, HeaderValue::from_static("/"));
+    response.headers_mut().insert(
+        SET_COOKIE,
+        HeaderValue::from_str(&cookie.to_string()).unwrap(),
+    );
 
     Ok(response)
 }
