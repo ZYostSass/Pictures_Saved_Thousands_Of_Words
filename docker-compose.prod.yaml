@@ -54,7 +54,7 @@ services:
       - ./robocert/dnsrobocert:/etc/dnsrobocert
     depends_on:
       - robocert
-    command: ["/wait-for-robocert.sh"] # Override the default command
+    command: [ "/bin/sh", "-c", "chmod +x /wait-for-robocert.sh && /wait-for-robocert.sh" ] # Override the default command
 
   robocert:
     image: adferrand/dnsrobocert
