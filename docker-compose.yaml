@@ -13,8 +13,10 @@ services:
       - POSTGRES_USER=rustweb
       - POSTGRES_PASSWORD=rustweb
       - POSTGRES_DB=postgres
+  backend:
+    container_name: backend
+    build: ./backend/
 
 volumes:
   db:
     driver: local
-

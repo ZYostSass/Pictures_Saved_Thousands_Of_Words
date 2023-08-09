@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n    UPDATE questions\n    SET title = $1, content = $2, tags = $3\n    WHERE id = $4\n    ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Text",
+        "TextArray",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4bfa57c9869c04363b73a4180aa81e789921fde96c793ea6fdf405e1bd307fca"
+}
