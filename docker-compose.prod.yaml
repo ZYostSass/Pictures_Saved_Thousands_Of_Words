@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    command: "-c log_statement=all"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U rustweb" ]
+      interval: 10s
+      timeout: 5s
+      retries: 25
+
+  backend:
+    container_name: backend
+    build: ./backend/
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # This prevents SQLX from trying to connect to database during compile
+      # We need to run cargo sqlx prepare first
+      - SQLX_OFFLINE=1
+      - API_HOST=${API_HOST}
+      - API_PORT=${API_PORT}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - SALT=${SALT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./robocert/letsencrypt:/etc/letsencrypt
+      - ./robocert/dnsrobocert:/etc/dnsrobocert
+    depends_on:
+      - robocert
+
+  robocert:
+    image: adferrand/dnsrobocert
+    container_name: robocert
+    volumes:
+      - ./robocert/letsencrypt:/etc/letsencrypt
+      - ./robocert/dnsrobocert:/etc/dnsrobocert
+    environment:
+      - VERSION=latest
+    restart: always
+
+#  certbot:
+#    image: certbot/certbot
+#    container_name: certbot
+#    volumes:
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+#    command: certonly --non-interactive --preferred-challenges dns --webroot -w /var/www/certbot --force-renewal --email caseybailey@gmail.com -d doggr.pro --agree-tos
+
+
+volumes:
+  db:
+    driver: local

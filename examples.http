@@ -1,4 +1,26 @@
-POST http://localhost:3000/question
+###
+POST http://5.78.82.67:3000/question
+Content-Type: application/json
+
+{
+  "title": "a title",
+  "content": "Some content",
+  "tags": ["tag1", "tag2"]
+}
+
+###
+POST http://doggr.pro:3000/question
+Content-Type: application/json
+
+{
+  "title": "a title",
+  "content": "Some content",
+  "tags": ["tag1", "tag2"]
+}
+
+
+###
+POST http://127.0.0.1:3000/question
 Content-Type: application/json
 
 {
@@ -55,11 +77,3 @@ Content-Type: application/json
 Accept: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MCwiZW1haWwiOiJuZXdlbWFpbDEyQGVtYWlsLmNvbSIsImV4cCI6MTY5MTAzOTU3NX0.fR7E3QXHfBGBe0iaW-p8hxKZIl6dcXkOcZrVfORxttQ
 
-###
-GET http://localhost:3000/comments
-Content-Type: application/json
-Accept: application/json
-
-{
-  "question_id": 1
-}

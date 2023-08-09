@@ -9,10 +9,59 @@ services:
       - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
     environment:
-      - POSTGRES_USER=rustweb
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=rustweb
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=rustweb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 25
+
+  backend:
+    container_name: backend
+    build: ./backend/
+    restart: always
+    ports:
+      - "3000"
+    env_file:
+      - ./backend/.env
+    environment:
+      # This prevents SQLX from trying to connect to database during compile
+      # We need to run cargo sqlx prepare first
+      - SQLX_OFFLINE=true
+      # Note the change here from @localhost to @postgres to match service name
+      - DATABASE_URL=postgres://postgres:rustweb@postgres/rustweb
+      # Instead of listening on "localhost" or "127.0.0.1" we want to listen on every interface
+      - API_HOST=0.0.0.0
+      - API_PORT=3000
+      - JWT_SECRET=put_a_totally_random_hash_here_for_security
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email {email} -d {domain} --agree-tos
 
 volumes:
   db:

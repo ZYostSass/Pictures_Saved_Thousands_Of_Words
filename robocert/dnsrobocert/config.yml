@@ -1,0 +1,14 @@
+draft: false
+acme:
+  email_account: caseybailey@gmail.com
+  staging: false
+profiles:
+  - name: hetzner
+    provider: hetzner
+    provider_options:
+      auth_token: TRFJ9478LmhWJRKBIfS67IQykyVak5Up
+certificates:
+  - domains:
+      - "*.doggr.pro"
+      - doggr.pro
+    profile: hetzner
