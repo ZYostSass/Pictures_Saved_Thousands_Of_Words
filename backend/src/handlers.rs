@@ -31,7 +31,7 @@ pub async fn root(
     context.insert("name", "Casey");
 
     let template_name = if let Some(claims_data) = claims {
-        context.insert("claims", &claims.data);
+        context.insert("claims", &claims_data);
         context.insert("is_logged_in", &true);
 
         let page_packages = am_database.get_all_question_pages().await?;
@@ -192,10 +192,11 @@ pub async fn login(
 
     response
         .headers_mut()
-        .insert(LOCATION, HeaderValue::from_static("/"))
-        .unwrap()
-        .insert(SET_COOKIE, HeaderValue::from_str(&cookie.to_string()))
-        .unwrap();
+        .insert(LOCATION, HeaderValue::from_static("/"));
+    response.headers_mut().insert(
+        SET_COOKIE,
+        HeaderValue::from_str(&cookie.to_string()).unwrap(),
+    );
 
     Ok(response)
 }
