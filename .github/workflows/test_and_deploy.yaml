@@ -7,11 +7,11 @@ on:
     branches: [ master, develop, sslpractice ]
 
 env:
-  CARGO_TERM_COLOR: always
-  DATABASE_URL: postgres://postgres:password@localhost/test
+  CARGO_TERM_COLOR: always #Pretty-print the logs
 
 jobs:
 
+  # Run cargo test on our backend and stop deployment if it fails
   test:
     runs-on: ubuntu-latest
 
@@ -95,26 +95,22 @@ jobs:
           # This is explicitly an SSH private key stored inside of Github Repo's "Repository Secrets"
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           script: |
-            echo 'export API_HOST=${{ secrets.API_HOST }}' >> ~/.bashrc
-            echo 'export API_PORT=${{ secrets.API_PORT }}' >> ~/.bashrc
-            echo 'export DATABASE_URL="${{ secrets.DATABASE_URL }}"' >> ~/.bashrc
-            echo 'export LOCAL_DATABASE_URL="${{ secrets.LOCAL_DATABASE_URL }}"' >> ~/.bashrc
-            echo 'export POSTGRES_DB=${{ secrets.POSTGRES_DB }}' >> ~/.bashrc
-            echo 'export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' >> ~/.bashrc
-            echo 'export POSTGRES_USER=${{ secrets.POSTGRES_USER }}' >> ~/.bashrc
-            echo 'export SALT=${{ secrets.SALT }}' >> ~/.bashrc
-            echo 'export SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}' >> ~/.bashrc
-            source ~/.bashrc
-            
-            export API_HOST=${{ secrets.API_HOST }}
-            export API_PORT=${{ secrets.API_PORT }}
-            export DATABASE_URL=${{ secrets.DATABASE_URL }}
-            export LOCAL_DATABASE_URL=${{ secrets.LOCAL_DATABASE_URL }}
-            export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            export SALT=${{ secrets.SALT }}
-            export SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}
+            # Extract PATH and save it to a temp file
+            grep '^PATH=' /etc/environment > /tmp/environment.tmp
+            # Append the environment variables
+            echo "API_HOST=${{ secrets.API_HOST }}" >> /tmp/environment.tmp
+            echo "API_PORT=${{ secrets.API_PORT }}" >> /tmp/environment.tmp
+            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" >> /tmp/environment.tmp
+            echo "LOCAL_DATABASE_URL=\"${{ secrets.LOCAL_DATABASE_URL }}\"" >> /tmp/environment.tmp
+            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> /tmp/environment.tmp
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> /tmp/environment.tmp
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> /tmp/environment.tmp
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /tmp/environment.tmp
+            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /tmp/environment.tmp
+            echo "SALT=${{ secrets.SALT }}" >> /tmp/environment.tmp
+            echo "SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}" >> /tmp/environment.tmp
+            # Move the temp file to /etc/environment
+            mv /tmp/environment.tmp /etc/environment
             
             sudo apt-get install -y build-essential libssl-dev pkg-config
             
