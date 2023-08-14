@@ -142,9 +142,9 @@ jobs:
             rm -rf ./class_project
             git clone --depth=1 --branch sslpracticenew https://github.com/pdx-cs-rust-web/class_project class_project  # Clone the latest
             cd class_project
-            # Drop the old version of the site
-            docker compose -f docker-compose.prod.yaml down
             # Build the new version
             docker compose -f docker-compose.prod.yaml build --no-cache --compress
+            # Drop the old version of the site
+            docker compose -f docker-compose.prod.yaml down
             # Start the new version
             docker compose -f docker-compose.prod.yaml up -d
