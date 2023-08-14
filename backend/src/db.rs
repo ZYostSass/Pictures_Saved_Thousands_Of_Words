@@ -1,7 +1,7 @@
-use axum::Json;
-use serde_json::Value;
 use std::sync::{Arc, Mutex, RwLock};
 
+use axum::Json;
+use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Row};
 use tracing::info;

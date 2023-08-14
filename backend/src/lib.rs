@@ -2,14 +2,14 @@ use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-use crate::db::new_pool;
-use crate::error::AppError;
-use crate::routes::main_routes;
 use dotenvy::dotenv;
-
 use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+
+use crate::db::new_pool;
+use crate::error::AppError;
+use crate::routes::main_routes;
 
 pub mod db;
 pub mod error;

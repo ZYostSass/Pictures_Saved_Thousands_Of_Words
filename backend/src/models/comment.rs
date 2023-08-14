@@ -1,9 +1,10 @@
-use crate::make_db_id;
-use crate::models::answer::AnswerId;
-use crate::models::question::QuestionId;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use serde_derive::{Deserialize, Serialize};
+
+use crate::make_db_id;
+use crate::models::answer::AnswerId;
+use crate::models::question::QuestionId;
 
 #[derive(Serialize, Deserialize, Debug, Clone, sqlx::FromRow)]
 pub struct Comment {

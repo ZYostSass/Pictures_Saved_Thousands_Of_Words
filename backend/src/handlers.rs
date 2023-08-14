@@ -6,7 +6,7 @@ use http::header::{LOCATION, SET_COOKIE};
 use http::{HeaderValue, StatusCode};
 use hyper::Body;
 use jsonwebtoken::Header;
-use serde_json::{json, Value};
+use serde_json::Value;
 use tera::Context;
 use tracing::error;
 
@@ -18,7 +18,6 @@ use crate::models::question::{
     CreateQuestion, GetQuestionById, Question, QuestionId, UpdateQuestion,
 };
 use crate::models::user::{Claims, OptionalClaims, User, UserSignup, KEYS};
-
 use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
@@ -108,7 +107,7 @@ pub async fn create_answer(
 }
 
 pub async fn register(
-    State(mut database): State<Store>,
+    State(database): State<Store>,
     Json(mut credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
     // We should also check to validate other things at some point like email address being in right format
@@ -151,7 +150,7 @@ pub async fn register(
 }
 
 pub async fn login(
-    State(mut database): State<Store>,
+    State(database): State<Store>,
     Json(creds): Json<User>,
 ) -> Result<Response<Body>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
@@ -164,7 +163,10 @@ pub async fn login(
         match argon2::verify_encoded(&*existing_user.password, creds.password.as_bytes()) {
             Ok(result) => result,
             Err(_) => {
-                error!("Password verification failed with {}", &*existing_user.password);
+                error!(
+                    "Password verification failed with {}",
+                    &*existing_user.password
+                );
                 return Err(AppError::InternalServerError);
             }
         };
