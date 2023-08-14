@@ -33,6 +33,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Cache Cargo registry
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache Cargo target dir
+        uses: actions/cache@v2
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
+
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
