@@ -6,124 +6,50 @@ on:
   pull_request:
     branches: [master, develop, sslpractice]
 
-jobs:
-#  backend_testing:
-#    runs-on: ubuntu-latest
-#    env:
-#      DB_HOST: 0.0.0.0
-#      DB_PORT: 5432
-#      DB_NAME: doggr
-#      DB_USER: doggr
-#      DB_PASS: doggr
-#      HOST: localhost
-#      PORT: 8080
-#      PASSWORD: password
-#      NODE_ENV: development
-#      AUTH_SECRET: ${{ secrets.DOGGR_AUTH_SECRET }}
-#      MINIO_HOST: localhost
-#      MINIO_PORT: 9000
-#    services:
-#      postgres:
-#        image: postgres:15
-#        env:
-#          POSTGRES_USER: doggr
-#          POSTGRES_PASSWORD: doggr
-#        options: >-
-#          --health-cmd pg_isready
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 25
-#        ports:
-#          - 5432:5432
-#    defaults:
-#      run:
-#        working-directory: backend
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      - name: Install Node.js
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: 18
-#
-#      - uses: pnpm/action-setup@v2
-#        name: Install pnpm
-#        id: pnpm-install
-#        with:
-#          version: 7
-#          run_install: false
-#
-#      ## This is for caching dependencies between job executions
-#      - name: Get pnpm dependency directory to put into cache for future jobs
-#        id: pnpm-cache
-#        shell: bash
-#        run: |
-#          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-#
-#      - uses: actions/cache@v3
-#        name: Actually create the Github Actions cache for those dependencies
-#        with:
-#          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-#          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-#          restore-keys: |
-#            ${{ runner.os }}-pnpm-store-
-#
-#      - name: Install dependencies
-#        run: pnpm install
-#
-#      - name: Run Migrations
-#        run: pnpm migration:freshSeed
-#
-#      - name: Run tests
-#        run: pnpm test
+env:
+  CARGO_TERM_COLOR: always
+  DATABASE_URL: postgres://postgres:password@localhost/test
 
-#  frontend_testing:
-#    runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        working-directory: frontend
-#    env:
-#      API_HOST: backend
-#      PORT: 8080
-#      MINIO_HOST: minio
-#      MINIO_PORT: 9000
-#    steps:
-#      - uses: actions/checkout@v3
-#        name: Checkout repository master branch
-#
-#      - uses: actions/setup-node@v3
-#        name: Setup Node Environment
-#        with:
-#          node-version: 18
-#
-#      - uses: pnpm/action-setup@v2
-#        name: Install pnpm
-#        id: pnpm-install
-#        with:
-#          version: 7
-#          run_install: false
-#
-#      - name: Get pnpm store directory
-#        id: pnpm-cache
-#        shell: bash
-#        run: |
-#          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-#
-#      - uses: actions/cache@v3
-#        name: Setup pnpm cache
-#        with:
-#          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-#          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-#          restore-keys: |
-#            ${{ runner.os }}-pnpm-store-
-#
-#      - name: Install dependencies
-#        run: pnpm install
-#
-#      - name: Run Tests
-#        run: pnpm test
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Change to backend directory
+        run: cd backend
+
+      - name: Build
+        run: cargo build --verbose
+        working-directory: backend
+
+      - name: Run tests
+        run: cargo test --verbose
+        working-directory: backend
 
   deploy:
     runs-on: ubuntu-latest

@@ -164,6 +164,7 @@ pub async fn login(
         match argon2::verify_encoded(&*existing_user.password, creds.password.as_bytes()) {
             Ok(result) => result,
             Err(_) => {
+                error!("Password verification failed with {}", &*existing_user.password);
                 return Err(AppError::InternalServerError);
             }
         };
