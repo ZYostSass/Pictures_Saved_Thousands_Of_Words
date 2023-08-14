@@ -53,8 +53,17 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Cache sqlx-cli
+        uses: actions/cache@v2
+        with:
+          path: ~/.cargo/bin/sqlx
+          key: ${{ runner.os }}-sqlx-cli-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install sqlx-cli
-        run: cargo install sqlx-cli
+        run: |
+          if [[ ! -x ~/.cargo/bin/sqlx ]]; then
+            cargo install sqlx-cli
+          fi
 
       - name: Run migrations
         run: sqlx migrate run
