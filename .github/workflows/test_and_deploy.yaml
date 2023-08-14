@@ -2,9 +2,9 @@ name: Heap Overrun CICD
 
 on:
   push:
-    branches: [master, develop, sslpractice, sslpracticenew]
+    branches: [ master, develop, sslpractice, sslpracticenew ]
   pull_request:
-    branches: [master, develop, sslpractice]
+    branches: [ master, develop, sslpractice ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -53,6 +53,15 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Install sqlx-cli
+        run: cargo install sqlx-cli
+
+      - name: Run migrations
+        run: sqlx migrate run
+        working-directory: backend
+        env:
+          DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost/${{ secrets.POSTGRES_DB }}
+
       - name: Change to backend directory
         run: cd backend
 
@@ -76,7 +85,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [ test ]
     steps:
       - uses: appleboy/ssh-action@master
         with:
