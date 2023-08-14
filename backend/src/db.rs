@@ -24,11 +24,20 @@ pub struct Store {
 
 pub async fn new_pool() -> PgPool {
     let db_url = std::env::var("DATABASE_URL").unwrap();
-    PgPoolOptions::new()
+    let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&db_url)
         .await
-        .unwrap()
+        .unwrap();
+    // Run migrations
+    info!("Performing migrations");
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .unwrap();
+    info!("Finished migrating");
+
+    pool
 }
 
 impl Store {

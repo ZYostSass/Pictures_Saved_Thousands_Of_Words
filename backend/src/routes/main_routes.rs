@@ -17,6 +17,7 @@ pub async fn app(pool: PgPool) -> Router {
 
     Router::new()
         // The router matches these FROM TOP TO BOTTOM explicitly!
+        .nest("/static", axum_static::static_router("backend/static").with_state(()))
         .route("/", get(root))
         .route("/questions", get(handlers::get_questions))
         .route("/question/:question_id", get(handlers::get_question_by_id))

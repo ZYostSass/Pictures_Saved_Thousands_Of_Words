@@ -43,6 +43,7 @@ regex = "1.9.1"
 rust-argon2 = "1.0.0"
 paste = "1.0.14"
 cookie = "0.17.0"
+axum_static = "1.2.2"
 
 [package.metadata.commands]
 # Drops db, creates db, runs all normal migrations, not seeds
