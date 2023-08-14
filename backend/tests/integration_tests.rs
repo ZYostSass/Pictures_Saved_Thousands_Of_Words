@@ -3,9 +3,8 @@ use hyper::Body;
 use sqlx::PgPool;
 use tower::ServiceExt;
 
-use backend::answer::CreateAnswer;
 use backend::main_routes::app;
-use backend::question::{CreateQuestion, Question};
+use backend::models::{CreateAnswer, CreateQuestion, Question};
 
 #[sqlx::test(fixtures("0001_questions"))]
 async fn test_add_question(db_pool: PgPool) {
