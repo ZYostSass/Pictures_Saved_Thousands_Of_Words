@@ -1,3 +1,6 @@
+use axum::body::{boxed, BoxBody};
+use axum::extract::Path;
+use axum::response::Response;
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -6,6 +9,10 @@ use crate::db::new_pool;
 use crate::error::AppError;
 use crate::routes::main_routes;
 use dotenvy::dotenv;
+use http::{Request, StatusCode, Uri};
+use hyper::Body;
+use tower::ServiceExt;
+use tower_http::services::ServeDir;
 
 use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
@@ -68,6 +75,37 @@ pub fn get_timestamp_after_8_hours() -> u64 {
     // 8 hours later
     let eight_hours_from_now = since_epoch + Duration::from_secs(60 * 60 * 8);
     eight_hours_from_now.as_secs()
+}
+
+// https://benw.is/posts/serving-static-files-with-axum
+pub async fn get_static_file(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, String)> {
+    let req = Request::builder().uri(uri).body(Body::empty()).unwrap();
+
+    // `ServeDir` implements `tower::Service` so we can call it with `tower::ServiceExt::oneshot`
+    // When run normally, the root is the workspace root (backend for us if we're running from backend)
+    match ServeDir::new("./static").oneshot(req).await {
+        Ok(res) => Ok(res.map(boxed)),
+        Err(err) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Something went wrong: {}", err),
+        )),
+    }
+}
+
+pub async fn file_handler(
+    Path(filename): Path<String>,
+) -> Result<Response<BoxBody>, (StatusCode, String)> {
+    let uri: Uri = format!("/{}", filename).parse().unwrap(); // Construct the URI from the filename
+    let res = get_static_file(uri.clone()).await?;
+
+    if res.status() == StatusCode::NOT_FOUND {
+        match format!("{}.html", uri).parse() {
+            Ok(uri_html) => get_static_file(uri_html).await,
+            Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Invalid URI".to_string())),
+        }
+    } else {
+        Ok(res)
+    }
 }
 
 pub type AppResult<T> = Result<T, AppError>;

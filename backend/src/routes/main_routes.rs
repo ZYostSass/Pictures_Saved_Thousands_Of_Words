@@ -8,16 +8,21 @@ use sqlx::PgPool;
 use crate::db::Store;
 use crate::handlers::root;
 use crate::routes::comment_routes::comment_routes;
-use crate::{handlers, layers};
+use crate::{file_handler, handlers, layers};
 
 pub async fn app(pool: PgPool) -> Router {
     let db = Store::with_pool(pool);
 
     let (cors_layer, trace_layer) = layers::get_layers();
 
+    let static_router = Router::new()
+        .route("/:filename", get(file_handler))
+        .with_state(db.clone());
+
     Router::new()
         // The router matches these FROM TOP TO BOTTOM explicitly!
-        .nest("/static", axum_static::static_router("backend/static").with_state(()))
+        //.nest("/static", axum_static::static_router("backend/static").with_state(()))
+        .nest("/static", static_router)
         .route("/", get(root))
         .route("/questions", get(handlers::get_questions))
         .route("/question/:question_id", get(handlers::get_question_by_id))

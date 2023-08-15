@@ -12,10 +12,8 @@ services:
     environment:
       - POSTGRES_USER=rustweb
       - POSTGRES_PASSWORD=rustweb
-      - POSTGRES_DB=postgres
-  backend:
-    container_name: backend
-    build: ./backend/
+      - POSTGRES_DB=rustweb
+
 
 volumes:
   db:

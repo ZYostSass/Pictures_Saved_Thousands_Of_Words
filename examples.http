@@ -1,3 +1,9 @@
+###
+GET http://localhost:3000/static/test.html
+Accept: application/json
+
+
+###
 POST http://localhost:3000/question
 Content-Type: application/json
 
@@ -63,3 +69,4 @@ Accept: application/json
 {
   "question_id": 1
 }
+

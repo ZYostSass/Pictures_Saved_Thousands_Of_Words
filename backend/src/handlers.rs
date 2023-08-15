@@ -6,7 +6,7 @@ use http::header::{LOCATION, SET_COOKIE};
 use http::{HeaderValue, StatusCode};
 use hyper::Body;
 use jsonwebtoken::Header;
-use serde_json::{json, Value};
+use serde_json::Value;
 use tera::Context;
 use tracing::error;
 
@@ -23,7 +23,7 @@ use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
 pub async fn root(
-    State(mut am_database): State<Store>,
+    State(am_database): State<Store>,
     OptionalClaims(claims): OptionalClaims,
 ) -> Result<Html<String>, AppError> {
     let mut context = Context::new();
@@ -110,7 +110,7 @@ pub async fn create_answer(
 }
 
 pub async fn register(
-    State(mut database): State<Store>,
+    State(database): State<Store>,
     Json(mut credentials): Json<UserSignup>,
 ) -> Result<Json<Value>, AppError> {
     // We should also check to validate other things at some point like email address being in right format
@@ -153,7 +153,7 @@ pub async fn register(
 }
 
 pub async fn login(
-    State(mut database): State<Store>,
+    State(database): State<Store>,
     Form(creds): Form<User>,
 ) -> Result<Response<Body>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
