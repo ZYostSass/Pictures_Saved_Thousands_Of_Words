@@ -6,7 +6,7 @@ profiles:
   - name: hetzner
     provider: hetzner
     provider_options:
-      auth_token: ${{ HETZNER_DNS_AUTH_TOKEN }}
+      auth_token: EUNmSyVmPWCUKQ9PDe00lT4IqVzAqlHN
 certificates:
   - domains:
       - "*.doggr.pro"
