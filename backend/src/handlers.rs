@@ -41,6 +41,7 @@ pub async fn root(
     } else {
         // Handle the case where the user isn't logged in
         error!("is_logged_in is FALSE now");
+        context.insert("password_validation_error", &false);
         context.insert("is_logged_in", &false);
         "index.html" // Use the original template when not logged in
     };
@@ -155,7 +156,7 @@ pub async fn register(
 pub async fn login(
     State(database): State<Store>,
     Form(creds): Form<User>,
-) -> Result<Response<Body>, AppError> {
+) -> Result<Response<String>, AppError> {
     if creds.email.is_empty() || creds.password.is_empty() {
         return Err(AppError::MissingCredentials);
     }
@@ -187,9 +188,20 @@ pub async fn login(
 
     let cookie = cookie::Cookie::build("jwt", token).http_only(true).finish();
 
+    let context = Context::new();
+
+    let rendered = TEMPLATES
+        .render("pages.html", &context)
+        .unwrap_or_else(|err| {
+            error!("Template rendering error: {}", err);
+            panic!()
+        });
+
+
+
     let mut response = Response::builder()
         .status(StatusCode::FOUND)
-        .body(Body::empty())
+        .body(rendered)
         .unwrap();
 
     response

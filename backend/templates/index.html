@@ -24,6 +24,10 @@
 <form action="/login" method="post">
     <label for="email">Email:</label>
     <input type="text" id="email" name="email">
+
+    {% if password_validation_error %}
+    ERROR INCORRECT PASSWORD!
+    {% endif %}
     <label for="password">Password:</label>
     <input type="password" id="password" name="password">
     <input type="submit" value="Login">
