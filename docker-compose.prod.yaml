@@ -39,8 +39,8 @@ services:
     container_name: backend
     build: ./backend/
     restart: always
-#    ports:
-#      - "3000:3000"
+    ports:
+      - "3000:3000"
     environment:
       - SQLX_OFFLINE=1
       - API_HOST=${API_HOST}

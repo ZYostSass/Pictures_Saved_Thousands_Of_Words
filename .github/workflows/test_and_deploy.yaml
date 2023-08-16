@@ -126,6 +126,7 @@ jobs:
             echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /tmp/environment.tmp
             echo "SALT=${{ secrets.SALT }}" >> /tmp/environment.tmp
             echo "SQLX_OFFLINE=${{ secrets.SQLX_OFFLINE }}" >> /tmp/environment.tmp
+            echo "HETZNER_DNS_AUTH_TOKEN=${{ secrets.HETZNER_DNS_AUTH_TOKEN }}" >> /tmp/environment.tmp
             
             # Move the temp file to /etc/environment
             mv /tmp/environment.tmp /etc/environment

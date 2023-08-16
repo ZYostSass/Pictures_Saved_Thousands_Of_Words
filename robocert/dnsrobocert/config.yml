@@ -1,7 +1,7 @@
 draft: false
 acme:
   email_account: caseybailey@gmail.com
-  staging: false # set to TRUE while testing or you will be banned for a week!
+  staging: true # set to TRUE while testing or you will be banned for a week!
 profiles:
   - name: hetzner
     provider: hetzner
