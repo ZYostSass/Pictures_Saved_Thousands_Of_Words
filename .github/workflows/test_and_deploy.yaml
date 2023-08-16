@@ -151,3 +151,4 @@ jobs:
             docker compose -f docker-compose.prod.yaml down
             # Start the new version
             docker compose -f docker-compose.prod.yaml up -d
+            docker system prune --all --volumes --force
