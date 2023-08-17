@@ -70,3 +70,19 @@ Accept: application/json
   "question_id": 1
 }
 
+###
+POST http://localhost:3000/apod
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "date": "2023-08-16",
+  "title": "Sample APOD",
+  "explanation": "This is a sample APOD explanation.",
+  "media_type": "image",
+  "url": "https://apod.nasa.gov/apod/image/2308/ElephantTrunkBatSquidSeahorse1024.jpg"
+}
+
+###
+GET http://localhost:3000/apods
+Accept: application/json

@@ -1,5 +1,6 @@
 use argon2::Config;
 use axum::extract::{Path, Query, State};
+use axum::handler::Handler;
 use axum::response::{Html, Response};
 use axum::{Form, Json};
 use http::header::{LOCATION, SET_COOKIE};
@@ -19,6 +20,7 @@ use crate::models::question::{
 };
 use crate::models::user::{Claims, OptionalClaims, User, UserSignup, KEYS};
 
+use crate::models::{Apod, CreateApod, ApodDisplayData};
 use crate::template::TEMPLATES;
 
 #[allow(dead_code)]
@@ -26,18 +28,24 @@ pub async fn root(
     State(am_database): State<Store>,
     OptionalClaims(claims): OptionalClaims,
 ) -> Result<Html<String>, AppError> {
+
+    //kidnapped casey's code to redirect logged in users to most recent POD!
+    //uses my api key; hopefully thats not a problem...
     let mut context = Context::new();
-    context.insert("name", "Casey");
+
 
     let template_name = if let Some(claims_data) = claims {
-        error!("Setting claims and is_logged_in is TRUE now");
-        context.insert("claims", &claims_data);
-        context.insert("is_logged_in", &true);
-        // Get all the page data
-        let page_packages = am_database.get_all_question_pages().await?;
-        context.insert("page_packages", &page_packages);
+        // helper functions, so to speak. gets current POD.
+        let apod_api_key = "HbP7U12I4K6CKbozeINP0PogXXL0fbiabLZ7jVjf"; // Replace with your NASA API key
+        let apod_response = get_apod(apod_api_key).await; // Use the question mark operator to handle errors
+    
+        let apod_data = apod_response.map_err(|_err| AppError::InternalServerError)?;
+    
+        context.insert("apod_url", &apod_data.url);
+        context.insert("apod_title", &apod_data.title);
+        context.insert("apod_explanation", &apod_data.explanation);
 
-        "pages.html" // Use the new template when logged in
+        "apod_page.html" // Use the new template when logged in
     } else {
         // Handle the case where the user isn't logged in
         error!("is_logged_in is FALSE now");
@@ -208,4 +216,70 @@ pub async fn protected(claims: Claims) -> Result<String, AppError> {
         "Welcome to the PROTECTED area :) \n Your claim data is: {}",
         claims
     ))
+}
+
+pub async fn create_apod(
+    State(mut am_database): State<Store>,
+    Json(apod): Json<CreateApod>,
+) -> Result<Json<Apod>, AppError> {
+    let new_apod = am_database
+        .add_apod(apod.user_id, apod.date, apod.title, apod.explanation, apod.media_type, apod.url)
+        .await?;
+    
+    Ok(Json(new_apod))
+}
+
+pub async fn get_apods(
+    State(mut am_database): State<Store>,
+) -> Result<Json<Vec<Apod>>, AppError> {
+    let all_apods = am_database.get_all_apods().await?;
+
+    Ok(Json(all_apods))
+}
+
+async fn get_apod(api_key: &str) -> Result<ApodDisplayData, reqwest::Error> {
+    let url = format!("https://api.nasa.gov/planetary/apod?api_key={}", api_key);
+    let response = reqwest::get(&url).await?.json().await?;
+    Ok(response)
+}
+
+pub async fn save_apod_to_account(
+    State(mut am_database): State<Store>,
+    Json(apod): Json<CreateApod>,
+    OptionalClaims(claims): OptionalClaims,
+) -> Result<Json<Apod>, AppError> {
+    if let Some(user_id) = claims.map(|claims| claims.id) {
+        // If the user is logged in, save the APOD to their account
+        let new_apod = am_database
+            .add_apod(user_id, apod.date, apod.title, apod.explanation, apod.media_type, apod.url)
+            .await?;
+
+        Ok(Json(new_apod))
+    } else {
+        // If the user is not logged in, return an error
+        Err(AppError::InternalServerError)
+    }
+}
+
+pub async fn apod_page(
+    OptionalClaims(_claims): OptionalClaims,
+) -> Result<Html<String>, AppError> {
+    let apod_api_key = "HbP7U12I4K6CKbozeINP0PogXXL0fbiabLZ7jVjf"; // Replace with your NASA API key
+    let apod_response = get_apod(apod_api_key).await; // Use the question mark operator to handle errors
+
+    let apod_data = apod_response.map_err(|_err| AppError::InternalServerError)?;
+
+    let mut context = Context::new();
+    context.insert("apod_url", &apod_data.url);
+    context.insert("apod_title", &apod_data.title);
+    context.insert("apod_explanation", &apod_data.explanation);
+
+    let rendered = TEMPLATES
+        .render("apod_page.html", &context)
+        .map_err(|err| {
+            error!("Template rendering error: {}", err);
+            AppError::InternalServerError // Convert rendering error to your AppError
+        })?;
+
+    Ok(Html(rendered))
 }
