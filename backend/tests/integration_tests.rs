@@ -2,8 +2,9 @@ use http::{Request, StatusCode};
 use hyper::Body;
 use sqlx::PgPool;
 use tower::ServiceExt;
+use chrono::NaiveDate;
 
-use backend::models::{CreateAnswer, CreateQuestion, Question};
+use backend::models::{CreateAnswer, CreateQuestion, Question, Apod};
 use backend::routes::main_routes::app;
 
 #[sqlx::test(fixtures("0001_questions"))]
@@ -150,3 +151,36 @@ async fn test_create_answer(db_pool: PgPool) {
 
     assert_eq!(response.status(), StatusCode::OK);
 }
+
+/* 
+#[sqlx::test(fixtures("0004_apods"))]
+async fn test_save_apod(db_pool: PgPool) {
+    let app = app(db_pool).await;
+
+    let apod = Apod {
+        id: backend::models::ApodId(1),
+        user_id: 1,
+        date: "2023-08-16".to_string(),
+        title: "Sample APOD".to_string(),
+        explanation: "This is a sample APOD explanation.".to_string(),
+        media_type: "image".to_string(),
+        url: "https://example.com/sample_apod.jpg".to_string(),   // Initialize the Apod struct with appropriate values
+    };
+
+    let user_id = 123;
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method(http::Method::POST)
+                .uri("/save_apod")
+                .header(http::header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                .body(Body::from(serde_json::to_string(&apod).unwrap()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+} */
