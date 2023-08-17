@@ -14,12 +14,14 @@ use crate::models::question::{
     GetQuestionById, IntoQuestionId, Question, QuestionId, UpdateQuestion,
 };
 use crate::models::user::{User, UserSignup};
+use crate::models::apod::{Apod, ApodId, ApodDisplayData};
 
 #[derive(Clone)]
 pub struct Store {
     pub conn_pool: PgPool,
     pub questions: Arc<Mutex<Vec<Question>>>,
     pub answers: Arc<RwLock<Vec<Answer>>>,
+    pub apod: Arc<Mutex<Vec<Apod>>>,
 }
 
 pub async fn new_pool() -> PgPool {
@@ -46,6 +48,7 @@ impl Store {
             conn_pool: pool,
             questions: Default::default(),
             answers: Default::default(),
+            apod: Default::default(),
         }
     }
 
@@ -276,6 +279,72 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         Ok(comment)
     }
 
+    //apod stuff
+
+    pub async fn get_all_apods(&mut self) -> Result<Vec<Apod>, AppError> {
+        let rows = sqlx::query!(
+            r#"
+    SELECT * FROM apods
+    "#
+        )
+        .fetch_all(&self.conn_pool)
+        .await?;
+    
+        let apods: Vec<_> = rows
+            .into_iter()
+            .map(|row| {
+                Apod {
+                    id: ApodId(row.id),
+                    user_id: row.user_id.unwrap_or_default(),
+                    date: row.date,
+                    title: row.title,
+                    explanation: row.explanation,
+                    media_type: row.media_type,
+                    url: row.url,                }
+            })
+            .collect();
+    
+        Ok(apods)
+    }
+
+    pub async fn add_apod(
+        &mut self,
+        user_id: i32,
+        date: String,
+        title: String,
+        explanation: String,
+        media_type: String,
+        url: String,
+    ) -> Result<Apod, AppError> {
+        let res = sqlx::query!(
+             r#"INSERT INTO apods (user_id, date, title, explanation, media_type, url)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING *
+            "#,
+                user_id,
+                date,
+                title,
+                explanation,
+                media_type,
+                url,
+        )
+        .fetch_one(&self.conn_pool)
+        .await?;
+        let saved_user_id = res.user_id.unwrap_or(user_id);
+
+        let saved_apod = Apod {
+            id: ApodId(res.id),
+            user_id: saved_user_id,
+            date: res.date,
+            title: res.title,
+            explanation: res.explanation,
+            media_type: res.media_type,
+            url: res.url,
+        };
+    
+        Ok((saved_apod))
+    }
+
     pub async fn get_all_question_pages(&self) -> Result<Vec<PagePackage>, AppError> {
         let questions = sqlx::query("SELECT id from questions")
             .fetch_all(&self.conn_pool)
@@ -388,6 +457,9 @@ SELECT title, content, id, tags FROM questions WHERE id = $1
         Ok(package)
     }
 }
+
+
+
 
 #[cfg(test)]
 mod tests {
